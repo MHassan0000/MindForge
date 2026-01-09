@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Mouse_Memoirs } from "next/font/google";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -12,8 +12,14 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const mouseMemoirs = Mouse_Memoirs({
+  variable: "--font-mouse-memoirs",
+  weight: ["400"],
+  subsets: ["latin"],
+});
+
 export const metadata: Metadata = {
-  title:"Mind Forge",
+  title: "Mind Forge",
   description: "Ai powered learning platform",
 };
 
@@ -25,7 +31,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${mouseMemoirs.variable} font-mouse-memoirs antialiased`}
       >
         {children}
       </body>
