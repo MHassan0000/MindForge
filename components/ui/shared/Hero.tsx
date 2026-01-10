@@ -46,10 +46,8 @@ const Hero = () => {
 
                 {/* CTA Buttons */}
                 <div className="pt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
-                    <button className="px-8 py-4 bg-blue-500 text-white font-bold text-lg rounded-full hover:bg-blue-400 transition-all hover:scale-105 shadow-[0_0_40px_-10px_rgba(59,130,246,0.5)]">
-                        Start Free Trial
-                    </button>
-                    <button className="px-8 py-4 bg-transparent border border-white/10 text-white font-semibold text-lg rounded-full hover:bg-white/5 transition-all">
+
+                    <button className="px-8 py-4 bg-transparent border border-white/10 text-white font-semibold text-lg rounded-full hover:bg-white/5 transition-all tracking-wider">
                         View Demo
                     </button>
                 </div>

@@ -18,7 +18,7 @@ export const subjectsColors = {
 export const NavItems = [
     {
         name: "Companions",
-        href: "/companions"
+        href: "/companion"
     },
     {
         name: "Reviews",
@@ -26,16 +26,13 @@ export const NavItems = [
     },
     {
         name: "Pricing",
-        href: "/pricing"
+        href: "/subscription"
     },
     {
         name: "Affiliate",
         href: "/affiliate"
     },
-    {
-        name: "Discord",
-        href: "/discord"
-    },
+
 ]
 
 export const voices = {

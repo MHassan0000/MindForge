@@ -1,6 +1,10 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
+import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 import { NavItems } from "@/constants";
+
 const Navbar = () => {
     return (
         <nav className="relative top-0 left-0 right-0  flex items-center justify-between px-6 py-4 bg-black/50 backdrop-blur-md border-b border-white/5">
@@ -8,7 +12,7 @@ const Navbar = () => {
             <div className="flex items-center gap-2">
                 <Link href="/">
                     <div>
-                        <Image src="/images/soundlogo2.png" alt="Logo" width={50} height={50} />
+                        <Image src="/images/brainlogo.png" alt="Logo" width={50} height={50} />
                     </div>
                 </Link>
                 <span className="text-3xl font-bold bg-clip-text text-transparent bg-linear-to-r from-white to-white/70 tracking-wider">
@@ -29,17 +33,30 @@ const Navbar = () => {
                 ))}
             </div>
 
-            {/* Auth Buttons */}
+            {/* Auth Section */}
             <div className="flex items-center gap-4">
-                <Link
-                    href="/sign-in"
-                    className="text-lg font-medium text-gray-300 hover:text-white transition-colors"
-                >
-                    Log In
-                </Link>
-                <button className="px-5 py-2 text-md font-medium text-blue-400 bg-white/5 border border-white/10 rounded-full hover:bg-blue-500/10 hover:border-blue-500/50 hover:shadow-[0_0_20px_rgba(59,130,246,0.3)] transition-all duration-300">
-                    Start Free Trial
-                </button>
+                <SignedOut>
+                    <Link
+                        href="/sign-in"
+                        className="text-lg font-medium text-gray-300 hover:text-white transition-colors"
+                    >
+                        Log In
+                    </Link>
+                    <Link href="/sign-up">
+                        <button className="px-5 py-2 text-md font-medium text-white bg-blue-600 hover:bg-blue-500 rounded-full shadow-lg shadow-blue-900/20 transition-all duration-300">
+                            Start Free Trial
+                        </button>
+                    </Link>
+                </SignedOut>
+                <SignedIn>
+                    <UserButton
+                        appearance={{
+                            elements: {
+                                avatarBox: "w-10 h-10",
+                            },
+                        }}
+                    />
+                </SignedIn>
             </div>
         </nav>
     );
