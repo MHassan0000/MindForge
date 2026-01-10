@@ -4,12 +4,17 @@
 @import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
 
 body {
   margin: 0;
   padding: 0;
   background: black;
   color: white;
+  @apply antialiased;
 }
 
 @theme inline {
