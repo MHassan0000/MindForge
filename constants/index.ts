@@ -15,6 +15,28 @@ export const subjectsColors = {
     history: "#FFECC8",
     economics: "#C8FFDF",
 };
+export const NavItems = [
+    {
+        name: "Companions",
+        href: "/companions"
+    },
+    {
+        name: "Reviews",
+        href: "/reviews"
+    },
+    {
+        name: "Pricing",
+        href: "/pricing"
+    },
+    {
+        name: "Affiliate",
+        href: "/affiliate"
+    },
+    {
+        name: "Discord",
+        href: "/discord"
+    },
+]
 
 export const voices = {
     male: { casual: "2BJW5coyhAzSr8STdHbE", formal: "c6SfcYrb2t09NHXiT80T" },
