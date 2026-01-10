@@ -31,11 +31,11 @@ const Hero = () => {
 
             {/* Main Headline */}
             <div className="relative z-10 text-center max-w-4xl mx-auto space-y-6 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-100">
-                <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight text-white/90 leading-[1.1] tracking-wider">
+                <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight text-white/90 leading-[1.1]">
                     The <span className="text-blue-400 inline-block relative">
                         Shortcut
                         {/* Optional subtle underline or glow */}
-                        <div className="absolute -bottom-2 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-blue-500 to-transparent opacity-50" />
+                        <div className="absolute -bottom-2 left-0 right-0 h-0.5 bg-linear-to-r from-transparent via-blue-500 to-transparent opacity-50" />
                     </span> <br className="hidden md:block" />
                     to Learning Mastery
                 </h1>

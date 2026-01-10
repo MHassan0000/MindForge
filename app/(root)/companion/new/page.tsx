@@ -1,9 +1,16 @@
-import React from 'react'
+import CompanionForm from "@/components/ui/shared/CompanionForm";
 
-const CompanionForm = () => {
+const NewCompanionPage = () => {
     return (
-        <div>CompanionForm</div>
-    )
-}
+        <div className="min-h-screen bg-black text-white py-12 px-4 sm:px-6 lg:px-8 pt-32">
+            <div className="max-w-7xl mx-auto">
+                <h1 className="text-3xl font-bold text-center mb-10 text-transparent bg-clip-text bg-linear-to-r from-blue-400 to-emerald-400">
+                    Create Your AI Companion
+                </h1>
+                <CompanionForm />
+            </div>
+        </div>
+    );
+};
 
-export default CompanionForm
+export default NewCompanionPage;

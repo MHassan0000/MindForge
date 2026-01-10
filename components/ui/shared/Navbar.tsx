@@ -3,13 +3,15 @@ import Image from "next/image";
 import { NavItems } from "@/constants";
 const Navbar = () => {
     return (
-        <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-4 bg-black/50 backdrop-blur-md border-b border-white/5">
+        <nav className="relative top-0 left-0 right-0  flex items-center justify-between px-6 py-4 bg-black/50 backdrop-blur-md border-b border-white/5">
             {/* Logo */}
             <div className="flex items-center gap-2">
-                <div className="">
-                    <Image src="/images/soundlogo2.png" alt="Logo" width={50} height={50} />
-                </div>
-                <span className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-white/70 tracking-wider">
+                <Link href="/">
+                    <div>
+                        <Image src="/images/soundlogo2.png" alt="Logo" width={50} height={50} />
+                    </div>
+                </Link>
+                <span className="text-3xl font-bold bg-clip-text text-transparent bg-linear-to-r from-white to-white/70 tracking-wider">
                     MindForge
                 </span>
             </div>
