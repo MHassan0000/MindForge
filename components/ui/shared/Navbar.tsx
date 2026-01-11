@@ -12,7 +12,7 @@ const Navbar = () => {
             <div className="flex items-center gap-2">
                 <Link href="/">
                     <div>
-                        <Image src="/images/brainlogo2.png" alt="Logo" width={50} height={50} />
+                        <Image src="/images/brainlogo2.png" alt="Logo" width={40} height={40} />
                     </div>
                 </Link>
                 <span className="text-3xl font-bold bg-clip-text text-transparent bg-linear-to-r from-white to-white/70 tracking-wider">
