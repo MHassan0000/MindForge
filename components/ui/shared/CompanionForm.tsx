@@ -11,6 +11,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { subjects } from "@/constants";
 import { Sparkles } from "lucide-react";
+import { createCompanion } from "@/lib/actions/companion.actions";
+import { redirect } from "next/navigation";
 
 const formSchema = z.object({
     name: z.string().min(1, { message: "Companion name is required." }),
@@ -39,8 +41,14 @@ const CompanionForm = () => {
     const isLoading = form.formState.isSubmitting;
 
     const onSubmit = async (values: CompanionFormValues) => {
-        console.log(values);
-        // Handle form submission logic here
+        const companion = await createCompanion(values);
+
+        if (companion) {
+            redirect(`/companion/${companion.id}`);
+        } else {
+            console.log('Failed to create a companion');
+            redirect('/');
+        }
     };
 
     return (
