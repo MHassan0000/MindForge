@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useEffect, useState } from "react";
 import {
     Select,
@@ -8,8 +9,7 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { subjects } from "@/constants";
-import { useRouter } from "next/navigation";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { formUrlQuery, removeKeysFromUrlQuery } from "@jsmastery/utils";
 
 const SubjectFilter = () => {
@@ -21,7 +21,7 @@ const SubjectFilter = () => {
 
     useEffect(() => {
         let newUrl = "";
-        if (subject === "all") {
+        if (subject === "all" || !subject) {
             newUrl = removeKeysFromUrlQuery({
                 params: searchParams.toString(),
                 keysToRemove: ["subject"],
@@ -34,22 +34,30 @@ const SubjectFilter = () => {
             });
         }
         router.push(newUrl, { scroll: false });
-    }, [subject]);
+    }, [subject, router, searchParams]);
 
     return (
-        <Select onValueChange={setSubject} value={subject}>
-            <SelectTrigger className="input capitalize">
-                <SelectValue placeholder="Subject" />
-            </SelectTrigger>
-            <SelectContent>
-                <SelectItem value="all">All subjects</SelectItem>
-                {subjects.map((subject) => (
-                    <SelectItem key={subject} value={subject} className="capitalize">
-                        {subject}
+        <div className="w-full md:w-[200px]">
+            <Select onValueChange={setSubject} value={subject || "all"}>
+                <SelectTrigger className="w-full h-11 rounded-full bg-zinc-900/50 border-white/10 text-gray-300 focus:ring-blue-500 hover:bg-zinc-900 hover:border-white/20 transition-all">
+                    <SelectValue placeholder="All Subjects" />
+                </SelectTrigger>
+                <SelectContent className="bg-zinc-900 border-white/10 text-gray-300">
+                    <SelectItem value="all" className="focus:bg-zinc-800 focus:text-white cursor-pointer">
+                        All Subjects
                     </SelectItem>
-                ))}
-            </SelectContent>
-        </Select>
+                    {subjects.map((item) => (
+                        <SelectItem
+                            key={item}
+                            value={item}
+                            className="capitalize focus:bg-zinc-800 focus:text-white cursor-pointer"
+                        >
+                            {item}
+                        </SelectItem>
+                    ))}
+                </SelectContent>
+            </Select>
+        </div>
     );
 };
 
