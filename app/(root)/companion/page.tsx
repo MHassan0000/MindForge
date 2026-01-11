@@ -31,7 +31,7 @@ const CompanionsLibrary = async (props: PageProps) => {
                         <span>AI Learning Companions</span>
                     </div>
                     <h1 className="text-4xl md:text-5xl font-bold text-white tracking-tight">
-                        Explore the <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">Library</span>
+                        Explore the <span className="text-transparent bg-clip-text bg-linear-to-r from-blue-400 to-purple-500">Library</span>
                     </h1>
                     <p className="text-lg text-gray-400 max-w-xl">
                         Discover specialized AI tutors designed to help you master any subject. Filter by topic or search for your perfect learning partner.

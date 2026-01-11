@@ -5,7 +5,7 @@ import { subjectsColors } from "@/constants";
 import AnimatedContent from "@/components/ui/shared/AnimatedContent";
 import { Clock, BookOpen, ArrowLeft, Info, MessageSquare } from "lucide-react";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import CompanionComponent from "@/components/ui/shared/CompanionComponent";
 
 interface CompanionSessionPageProps {
     params: Promise<{ id: string }>;
