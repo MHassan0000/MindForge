@@ -7,7 +7,7 @@ import Image from "next/image";
 import Lottie, { LottieRefCurrentProps } from "lottie-react";
 import soundwaves from '@/constants/soundwaves.json'
 import { addToSessionHistory } from "@/lib/actions/companion.actions";
-import { Mic, MicOff, Phone, PhoneOff } from "lucide-react";
+import { Mic, MicOff, Phone, PhoneOff, Loader2, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import AnimatedContent from './AnimatedContent';
@@ -231,7 +231,7 @@ const CompanionComponent = ({ companionId, subject, topic, name, userName, userI
             <div className="flex flex-col lg:flex-row gap-8 h-[700px] w-full">
 
                 {/* Visualizer & Avatar Section */}
-                <div className="relative flex-1 rounded-3xl overflow-hidden bg-zinc-900/50 border border-white/10 shadow-2xl flex flex-col items-center justify-center p-8 lg:p-12">
+                <div className="relative flex-1 rounded-3xl overflow-hidden bg-zinc-900/50 border border-white/10 shadow-2xl flex flex-col p-4 sm:p-8 lg:p-12">
                     {/* Dynamic Background Glow */}
                     <div
                         className={cn(
@@ -241,102 +241,108 @@ const CompanionComponent = ({ companionId, subject, topic, name, userName, userI
                         style={{ backgroundColor: color }}
                     />
 
-                    {/* Companion Avatar Wrapper */}
-                    <div className="relative z-10 w-full max-w-[300px] aspect-square flex items-center justify-center">
-                        {/* Static State */}
-                        <div
-                            className={cn(
-                                'absolute inset-0 flex items-center justify-center transition-all duration-700 ease-in-out',
-                                callStatus === CallStatus.ACTIVE ? 'opacity-0 scale-90' : 'opacity-100 scale-100'
-                            )}
-                        >
-                            <div className="relative w-48 h-48 rounded-full flex items-center justify-center bg-black/40 ring-4 ring-white/10 shadow-xl backdrop-blur-sm">
-                                <Image
-                                    src={`/icons/${subject}.svg`}
-                                    alt={subject}
-                                    width={100}
-                                    height={100}
-                                    className="drop-shadow-lg"
-                                    onError={(e) => {
-                                        (e.target as HTMLImageElement).src = '/icons/user.png';
-                                    }}
-                                />
-                            </div>
-                        </div>
-
-                        {/* Active Call State (Waveform) */}
-                        <div className={cn(
-                            'absolute inset-0 flex items-center justify-center transition-all duration-700 ease-in-out',
-                            callStatus === CallStatus.ACTIVE ? 'opacity-100 scale-100' : 'opacity-0 scale-110'
-                        )}>
-                            <div className="relative w-64 h-64 rounded-full flex items-center justify-center bg-black/60 ring-1 ring-white/20 shadow-2xl backdrop-blur-md">
-                                <Lottie
-                                    lottieRef={lottieRef}
-                                    animationData={soundwaves}
-                                    loop={true}
-                                    className="w-48 h-48 opacity-80"
-                                />
-                                {/* Overlay Icon */}
-                                <div className="absolute inset-0 flex items-center justify-center opacity-30">
+                    {/* Main Content Area - Centered in available space */}
+                    <div className="flex-1 flex flex-col items-center justify-center w-full z-10 min-h-0">
+                        {/* Companion Avatar Wrapper */}
+                        <div className="relative w-full max-w-60 sm:max-w-[300px] aspect-square flex items-center justify-center mb-6 sm:mb-8">
+                            {/* Static State */}
+                            <div
+                                className={cn(
+                                    'absolute inset-0 flex items-center justify-center transition-all duration-700 ease-in-out',
+                                    callStatus === CallStatus.ACTIVE ? 'opacity-0 scale-90' : 'opacity-100 scale-100'
+                                )}
+                            >
+                                <div className="relative w-40 h-40 sm:w-48 sm:h-48 rounded-full flex items-center justify-center bg-black/40 ring-4 ring-white/10 shadow-xl backdrop-blur-sm">
                                     <Image
                                         src={`/icons/${subject}.svg`}
                                         alt={subject}
-                                        width={60}
-                                        height={60}
+                                        width={100}
+                                        height={100}
+                                        className="drop-shadow-lg w-20 h-20 sm:w-24 sm:h-24"
                                         onError={(e) => {
                                             (e.target as HTMLImageElement).src = '/icons/user.png';
                                         }}
                                     />
                                 </div>
                             </div>
+
+                            {/* Active Call State (Waveform) */}
+                            <div className={cn(
+                                'absolute inset-0 flex items-center justify-center transition-all duration-700 ease-in-out',
+                                callStatus === CallStatus.ACTIVE ? 'opacity-100 scale-100' : 'opacity-0 scale-110'
+                            )}>
+                                <div className="relative w-56 h-56 sm:w-64 sm:h-64 rounded-full flex items-center justify-center bg-black/60 ring-1 ring-white/20 shadow-2xl backdrop-blur-md">
+                                    <Lottie
+                                        lottieRef={lottieRef}
+                                        animationData={soundwaves}
+                                        loop={true}
+                                        className="w-40 h-40 sm:w-48 sm:h-48 opacity-80"
+                                    />
+                                    {/* Overlay Icon */}
+                                    <div className="absolute inset-0 flex items-center justify-center opacity-30">
+                                        <Image
+                                            src={`/icons/${subject}.svg`}
+                                            alt={subject}
+                                            width={50}
+                                            height={50}
+                                            className="w-12 h-12 sm:w-16 sm:h-16"
+                                            onError={(e) => {
+                                                (e.target as HTMLImageElement).src = '/icons/user.png';
+                                            }}
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="text-center space-y-3 sm:space-y-4 px-4 w-full">
+                            <h2 className="text-2xl sm:text-3xl font-bold text-white tracking-tight truncate px-2">{name}</h2>
+                            <div className="flex flex-col items-center gap-2">
+                                <p className={cn(
+                                    "text-xs sm:text-sm font-medium px-3 py-1 rounded-full inline-block transition-colors",
+                                    callStatus === CallStatus.ACTIVE ? "bg-green-500/20 text-green-400" :
+                                        callStatus === CallStatus.CONNECTING ? "bg-yellow-500/20 text-yellow-400" :
+                                            callStatus === CallStatus.FINISHED ? "bg-blue-500/20 text-blue-400" :
+                                                "bg-zinc-800 text-zinc-400"
+                                )}>
+                                    {callStatus === CallStatus.ACTIVE ? "Listening & Speaking" :
+                                        callStatus === CallStatus.CONNECTING ? "Connecting..." :
+                                            callStatus === CallStatus.FINISHED ? "Session Ended" :
+                                                "Ready to Start"}
+                                </p>
+                                {/* Timer Display */}
+                                {callStatus === CallStatus.ACTIVE && (
+                                    <p className={cn(
+                                        "text-base sm:text-lg font-mono font-bold px-4 py-1 rounded-full",
+                                        timeRemaining <= 60 ? "bg-red-500/20 text-red-400" : "bg-zinc-800 text-zinc-300"
+                                    )}>
+                                        {formatTime(timeRemaining)}
+                                    </p>
+                                )}
+                            </div>
                         </div>
                     </div>
 
-                    <div className="relative z-10 mt-8 text-center space-y-2">
-                        <h2 className="text-3xl font-bold text-white tracking-tight">{name}</h2>
-                        <p className={cn(
-                            "text-sm font-medium px-3 py-1 rounded-full inline-block transition-colors",
-                            callStatus === CallStatus.ACTIVE ? "bg-green-500/20 text-green-400" :
-                                callStatus === CallStatus.CONNECTING ? "bg-yellow-500/20 text-yellow-400" :
-                                    callStatus === CallStatus.FINISHED ? "bg-blue-500/20 text-blue-400" :
-                                        "bg-zinc-800 text-zinc-400"
-                        )}>
-                            {callStatus === CallStatus.ACTIVE ? "Listening & Speaking" :
-                                callStatus === CallStatus.CONNECTING ? "Connecting..." :
-                                    callStatus === CallStatus.FINISHED ? "Session Ended" :
-                                        "Ready to Start"}
-                        </p>
-                        {/* Timer Display */}
-                        {callStatus === CallStatus.ACTIVE && (
-                            <p className={cn(
-                                "text-lg font-mono font-bold px-4 py-1 rounded-full",
-                                timeRemaining <= 60 ? "bg-red-500/20 text-red-400" : "bg-zinc-800 text-zinc-300"
-                            )}>
-                                {formatTime(timeRemaining)}
-                            </p>
-                        )}
-                    </div>
-
-                    {/* Footer Controls */}
-                    <div className="absolute bottom-8 left-0 right-0 flex justify-center gap-4 z-20">
+                    {/* Footer Controls - Relative Position */}
+                    <div className="relative z-20 mt-4 sm:mt-8 w-full flex justify-center gap-3 sm:gap-6 flex-wrap shrink-0">
                         {/* Mic Toggle */}
                         <Button
                             size="icon"
                             variant="secondary"
                             className={cn(
-                                "w-14 h-14 rounded-full shadow-lg border border-white/10 transition-all",
+                                "rounded-full shadow-lg border border-white/10 transition-all w-12 h-12 sm:w-14 sm:h-14 shrink-0",
                                 isMuted ? "bg-red-500/20 text-red-400 hover:bg-red-500/30" : "bg-white/10 hover:bg-white/20 text-white"
                             )}
                             onClick={toggleMicrophone}
                             disabled={callStatus !== CallStatus.ACTIVE}
                         >
-                            {isMuted ? <MicOff className="w-6 h-6" /> : <Mic className="w-6 h-6" />}
+                            {isMuted ? <MicOff className="w-5 h-5 sm:w-6 sm:h-6" /> : <Mic className="w-5 h-5 sm:w-6 sm:h-6" />}
                         </Button>
 
                         {/* Call Control */}
                         <Button
                             className={cn(
-                                "h-14 px-8 rounded-full font-bold text-lg shadow-xl transition-all border border-white/10",
+                                "rounded-full font-bold shadow-xl transition-all border border-white/10 h-12 sm:h-14 px-6 sm:px-8 text-sm sm:text-lg shrink-0 min-w-0 max-w-full",
                                 callStatus === CallStatus.ACTIVE
                                     ? "bg-red-600 hover:bg-red-700 text-white"
                                     : "bg-blue-600 hover:bg-blue-500 text-white"
@@ -345,13 +351,13 @@ const CompanionComponent = ({ companionId, subject, topic, name, userName, userI
                             disabled={callStatus === CallStatus.CONNECTING}
                         >
                             {callStatus === CallStatus.ACTIVE ? (
-                                <span className="flex items-center gap-2"><PhoneOff className="w-5 h-5" /> End Session</span>
+                                <span className="flex items-center gap-2 truncate"><PhoneOff className="w-5 h-5 sm:w-6 sm:h-6 shrink-0" /> End Session</span>
                             ) : callStatus === CallStatus.CONNECTING ? (
-                                <span className="animate-pulse">Connecting...</span>
+                                <span className="animate-pulse flex items-center gap-2 truncate"><Loader2 className="w-5 h-5 sm:w-6 sm:h-6 animate-spin shrink-0" /> Connecting...</span>
                             ) : callStatus === CallStatus.FINISHED ? (
-                                <span className="flex items-center gap-2"><Phone className="w-5 h-5" /> Restart Session</span>
+                                <span className="flex items-center gap-2 truncate"><Phone className="w-5 h-5 sm:w-6 sm:h-6 shrink-0" /> Restart Session</span>
                             ) : (
-                                <span className="flex items-center gap-2"><Phone className="w-5 h-5" /> Start Session</span>
+                                <span className="flex items-center gap-2 truncate"><Phone className="w-5 h-5 sm:w-6 sm:h-6 shrink-0" /> Start Session</span>
                             )}
                         </Button>
                     </div>

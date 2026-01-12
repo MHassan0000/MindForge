@@ -8,12 +8,15 @@ export const subjects = [
 ];
 
 export const subjectsColors = {
-    science: "#E5D0FF",
-    maths: "#FFDA6E",
-    language: "#BDE7FF",
-    coding: "#FFC8E4",
-    history: "#FFECC8",
-    economics: "#C8FFDF",
+
+    science: "#8AB4F8",   // cool research blue (Google Dark–style)
+    maths: "#F6C177",     // muted amber, intelligent not playful
+    language: "#9ADBC5",  // soft teal, calm + learning-friendly
+    coding: "#F38BA8",    // controlled rose, modern dev vibe
+    history: "#D6B98C",   // aged parchment / academic warmth
+    economics: "#7DD3A6",
+
+
 };
 export const NavItems = [
     {
