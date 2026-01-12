@@ -1,18 +1,28 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, useCallback } from 'react'
 import { cn, configureAssistant, getSubjectColor } from "@/lib/utils";
-import vapi from "@/lib/vapi/vapi.sdk";
+import getVapi from "@/lib/vapi/vapi.sdk";
 import Image from "next/image";
 import Lottie, { LottieRefCurrentProps } from "lottie-react";
 import soundwaves from '@/constants/soundwaves.json'
 import { addToSessionHistory } from "@/lib/actions/companion.actions";
+import { Mic, MicOff, Phone, PhoneOff } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import AnimatedContent from './AnimatedContent';
 
 enum CallStatus {
     INACTIVE = 'INACTIVE',
     CONNECTING = 'CONNECTING',
     ACTIVE = 'ACTIVE',
     FINISHED = 'FINISHED',
+}
+
+// Group consecutive messages from the same role
+interface GroupedMessage {
+    role: "user" | "system" | "assistant";
+    content: string;
 }
 
 const CompanionComponent = ({ companionId, subject, topic, name, userName, userImage, style, voice }: CompanionComponentProps) => {
@@ -23,35 +33,59 @@ const CompanionComponent = ({ companionId, subject, topic, name, userName, userI
 
     const lottieRef = useRef<LottieRefCurrentProps>(null);
 
-    useEffect(() => {
-        if (lottieRef) {
-            if (isSpeaking) {
-                lottieRef.current?.play()
-            } else {
-                lottieRef.current?.stop()
-            }
+    // Group consecutive messages from the same role into single paragraphs
+    const groupedMessages = messages.reduce<GroupedMessage[]>((acc, msg) => {
+        const lastMsg = acc[acc.length - 1];
+        if (lastMsg && lastMsg.role === msg.role) {
+            // Append to existing message from same role
+            lastMsg.content += ' ' + msg.content;
+        } else {
+            // Start new message group
+            acc.push({ role: msg.role, content: msg.content });
         }
-    }, [isSpeaking, lottieRef])
+        return acc;
+    }, []);
 
     useEffect(() => {
-        const onCallStart = () => setCallStatus(CallStatus.ACTIVE);
+        if (lottieRef.current) {
+            if (isSpeaking) {
+                lottieRef.current.play()
+            } else {
+                lottieRef.current.stop()
+            }
+        }
+    }, [isSpeaking])
+
+    useEffect(() => {
+        let vapi: ReturnType<typeof getVapi>;
+        try {
+            vapi = getVapi();
+        } catch {
+            return;
+        }
+
+        const onCallStart = () => {
+            setCallStatus(CallStatus.ACTIVE);
+        };
 
         const onCallEnd = () => {
             setCallStatus(CallStatus.FINISHED);
-            addToSessionHistory(companionId)
-        }
+            addToSessionHistory(companionId);
+        };
 
-        const onMessage = (message: Message) => {
+        const onMessage = (message: VapiMessage) => {
             if (message.type === 'transcript' && message.transcriptType === 'final') {
-                const newMessage = { role: message.role, content: message.transcript }
+                const newMessage: SavedMessage = { role: message.role, content: message.transcript || "" }
                 setMessages((prev) => [newMessage, ...prev])
             }
-        }
+        };
 
         const onSpeechStart = () => setIsSpeaking(true);
         const onSpeechEnd = () => setIsSpeaking(false);
 
-        const onError = (error: Error) => console.log('Error', error);
+        const onError = () => {
+            setCallStatus(CallStatus.INACTIVE);
+        };
 
         vapi.on('call-start', onCallStart);
         vapi.on('call-end', onCallEnd);
@@ -68,107 +102,216 @@ const CompanionComponent = ({ companionId, subject, topic, name, userName, userI
             vapi.off('speech-start', onSpeechStart);
             vapi.off('speech-end', onSpeechEnd);
         }
+    }, [companionId]);
+
+    const toggleMicrophone = useCallback(() => {
+        try {
+            const vapi = getVapi();
+            const currentMuteState = vapi.isMuted();
+            vapi.setMuted(!currentMuteState);
+            setIsMuted(!currentMuteState);
+        } catch {
+            // Silent fail
+        }
     }, []);
 
-    const toggleMicrophone = () => {
-        const isMuted = vapi.isMuted();
-        vapi.setMuted(!isMuted);
-        setIsMuted(!isMuted)
-    }
+    const handleCall = useCallback(async () => {
+        try {
+            setCallStatus(CallStatus.CONNECTING);
 
-    const handleCall = async () => {
-        setCallStatus(CallStatus.CONNECTING)
+            const vapi = getVapi();
+            const assistantConfig = configureAssistant(voice, style);
 
-        const assistantOverrides = {
-            variableValues: { subject, topic, style },
-            clientMessages: ["transcript"],
-            serverMessages: [],
+            await vapi.start(assistantConfig, {
+                variableValues: { subject, topic, style },
+            });
+        } catch {
+            setCallStatus(CallStatus.INACTIVE);
         }
+    }, [voice, style, subject, topic]);
 
-        // @ts-expect-error
-        vapi.start(configureAssistant(voice, style), assistantOverrides)
-    }
+    const handleDisconnect = useCallback(() => {
+        try {
+            const vapi = getVapi();
+            vapi.stop();
+            setCallStatus(CallStatus.FINISHED);
+        } catch {
+            // Silent fail
+        }
+    }, []);
 
-    const handleDisconnect = () => {
-        setCallStatus(CallStatus.FINISHED)
-        vapi.stop()
-    }
+    const color = getSubjectColor(subject);
 
     return (
-        <section className="flex flex-col h-[70vh]">
-            <section className="flex gap-8 max-sm:flex-col">
-                <div className="companion-section">
-                    <div className="companion-avatar" style={{ backgroundColor: getSubjectColor(subject) }}>
+        <AnimatedContent>
+            <div className="flex flex-col lg:flex-row gap-8 h-[700px] w-full">
+
+                {/* Visualizer & Avatar Section */}
+                <div className="relative flex-1 rounded-3xl overflow-hidden bg-zinc-900/50 border border-white/10 shadow-2xl flex flex-col items-center justify-center p-8 lg:p-12">
+                    {/* Dynamic Background Glow */}
+                    <div
+                        className={cn(
+                            "absolute inset-0 opacity-20 transition-all duration-1000 blur-3xl",
+                            callStatus === CallStatus.ACTIVE ? "opacity-30" : "opacity-10"
+                        )}
+                        style={{ backgroundColor: color }}
+                    />
+
+                    {/* Companion Avatar Wrapper */}
+                    <div className="relative z-10 w-full max-w-[300px] aspect-square flex items-center justify-center">
+                        {/* Static State */}
                         <div
-                            className={
-                                cn(
-                                    'absolute transition-opacity duration-1000', callStatus === CallStatus.FINISHED || callStatus === CallStatus.INACTIVE ? 'opacity-1001' : 'opacity-0', callStatus === CallStatus.CONNECTING && 'opacity-100 animate-pulse'
-                                )
-                            }>
-                            <Image src={`/icons/${subject}.svg`} alt={subject} width={150} height={150} className="max-sm:w-fit" />
+                            className={cn(
+                                'absolute inset-0 flex items-center justify-center transition-all duration-700 ease-in-out',
+                                callStatus === CallStatus.ACTIVE ? 'opacity-0 scale-90' : 'opacity-100 scale-100'
+                            )}
+                        >
+                            <div className="relative w-48 h-48 rounded-full flex items-center justify-center bg-black/40 ring-4 ring-white/10 shadow-xl backdrop-blur-sm">
+                                <Image
+                                    src={`/icons/${subject}.svg`}
+                                    alt={subject}
+                                    width={100}
+                                    height={100}
+                                    className="drop-shadow-lg"
+                                    onError={(e) => {
+                                        (e.target as HTMLImageElement).src = '/images/brainlogo2.png';
+                                    }}
+                                />
+                            </div>
                         </div>
 
-                        <div className={cn('absolute transition-opacity duration-1000', callStatus === CallStatus.ACTIVE ? 'opacity-100' : 'opacity-0')}>
-                            <Lottie
-                                lottieRef={lottieRef}
-                                animationData={soundwaves}
-                                autoplay={false}
-                                className="companion-lottie"
-                            />
+                        {/* Active Call State (Waveform) */}
+                        <div className={cn(
+                            'absolute inset-0 flex items-center justify-center transition-all duration-700 ease-in-out',
+                            callStatus === CallStatus.ACTIVE ? 'opacity-100 scale-100' : 'opacity-0 scale-110'
+                        )}>
+                            <div className="relative w-64 h-64 rounded-full flex items-center justify-center bg-black/60 ring-1 ring-white/20 shadow-2xl backdrop-blur-md">
+                                <Lottie
+                                    lottieRef={lottieRef}
+                                    animationData={soundwaves}
+                                    loop={true}
+                                    className="w-48 h-48 opacity-80"
+                                />
+                                {/* Overlay Icon */}
+                                <div className="absolute inset-0 flex items-center justify-center opacity-30">
+                                    <Image
+                                        src={`/icons/${subject}.svg`}
+                                        alt={subject}
+                                        width={60}
+                                        height={60}
+                                        onError={(e) => {
+                                            (e.target as HTMLImageElement).src = '/images/brainlogo2.png';
+                                        }}
+                                    />
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <p className="font-bold text-2xl">{name}</p>
-                </div>
 
-                <div className="user-section">
-                    <div className="user-avatar">
-                        <Image src={userImage} alt={userName} width={130} height={130} className="rounded-lg" />
-                        <p className="font-bold text-2xl">
-                            {userName}
+                    <div className="relative z-10 mt-8 text-center space-y-2">
+                        <h2 className="text-3xl font-bold text-white tracking-tight">{name}</h2>
+                        <p className={cn(
+                            "text-sm font-medium px-3 py-1 rounded-full inline-block transition-colors",
+                            callStatus === CallStatus.ACTIVE ? "bg-green-500/20 text-green-400" :
+                                callStatus === CallStatus.CONNECTING ? "bg-yellow-500/20 text-yellow-400" :
+                                    callStatus === CallStatus.FINISHED ? "bg-blue-500/20 text-blue-400" :
+                                        "bg-zinc-800 text-zinc-400"
+                        )}>
+                            {callStatus === CallStatus.ACTIVE ? "Listening & Speaking" :
+                                callStatus === CallStatus.CONNECTING ? "Connecting..." :
+                                    callStatus === CallStatus.FINISHED ? "Session Ended" :
+                                        "Ready to Start"}
                         </p>
                     </div>
-                    <button className="btn-mic" onClick={toggleMicrophone} disabled={callStatus !== CallStatus.ACTIVE}>
-                        <Image src={isMuted ? '/icons/mic-off.svg' : '/icons/mic-on.svg'} alt="mic" width={36} height={36} />
-                        <p className="max-sm:hidden">
-                            {isMuted ? 'Turn on microphone' : 'Turn off microphone'}
-                        </p>
-                    </button>
-                    <button className={cn('rounded-lg py-2 cursor-pointer transition-colors w-full text-white', callStatus === CallStatus.ACTIVE ? 'bg-red-700' : 'bg-primary', callStatus === CallStatus.CONNECTING && 'animate-pulse')} onClick={callStatus === CallStatus.ACTIVE ? handleDisconnect : handleCall}>
-                        {callStatus === CallStatus.ACTIVE
-                            ? "End Session"
-                            : callStatus === CallStatus.CONNECTING
-                                ? 'Connecting'
-                                : 'Start Session'
-                        }
-                    </button>
-                </div>
-            </section>
 
-            <section className="transcript">
-                <div className="transcript-message no-scrollbar">
-                    {messages.map((message, index) => {
-                        if (message.role === 'assistant') {
-                            return (
-                                <p key={index} className="max-sm:text-sm">
-                                    {
-                                        name
-                                            .split(' ')[0]
-                                            .replace('/[.,]/g, ', '')
-                                    }: {message.content}
-                                </p>
-                            )
-                        } else {
-                            return <p key={index} className="text-primary max-sm:text-sm">
-                                {userName}: {message.content}
-                            </p>
-                        }
-                    })}
+                    {/* Footer Controls */}
+                    <div className="absolute bottom-8 left-0 right-0 flex justify-center gap-4 z-20">
+                        {/* Mic Toggle */}
+                        <Button
+                            size="icon"
+                            variant="secondary"
+                            className={cn(
+                                "w-14 h-14 rounded-full shadow-lg border border-white/10 transition-all",
+                                isMuted ? "bg-red-500/20 text-red-400 hover:bg-red-500/30" : "bg-white/10 hover:bg-white/20 text-white"
+                            )}
+                            onClick={toggleMicrophone}
+                            disabled={callStatus !== CallStatus.ACTIVE}
+                        >
+                            {isMuted ? <MicOff className="w-6 h-6" /> : <Mic className="w-6 h-6" />}
+                        </Button>
+
+                        {/* Call Control */}
+                        <Button
+                            className={cn(
+                                "h-14 px-8 rounded-full font-bold text-lg shadow-xl transition-all border border-white/10",
+                                callStatus === CallStatus.ACTIVE
+                                    ? "bg-red-600 hover:bg-red-700 text-white"
+                                    : "bg-blue-600 hover:bg-blue-500 text-white"
+                            )}
+                            onClick={callStatus === CallStatus.ACTIVE ? handleDisconnect : handleCall}
+                            disabled={callStatus === CallStatus.CONNECTING}
+                        >
+                            {callStatus === CallStatus.ACTIVE ? (
+                                <span className="flex items-center gap-2"><PhoneOff className="w-5 h-5" /> End Session</span>
+                            ) : callStatus === CallStatus.CONNECTING ? (
+                                <span className="animate-pulse">Connecting...</span>
+                            ) : callStatus === CallStatus.FINISHED ? (
+                                <span className="flex items-center gap-2"><Phone className="w-5 h-5" /> Restart Session</span>
+                            ) : (
+                                <span className="flex items-center gap-2"><Phone className="w-5 h-5" /> Start Session</span>
+                            )}
+                        </Button>
+                    </div>
                 </div>
 
-                <div className="transcript-fade" />
-            </section>
-        </section>
-    )
+                {/* Transcript / Chat Section */}
+                <div className="lg:w-[400px] flex flex-col rounded-3xl overflow-hidden bg-zinc-900/50 border border-white/10 backdrop-blur-sm shadow-xl">
+                    <div className="p-6 border-b border-white/5 bg-zinc-900/80">
+                        <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-full overflow-hidden border border-white/10">
+                                <Image src={userImage} alt={userName} width={40} height={40} className="object-cover" />
+                            </div>
+                            <div>
+                                <h3 className="text-sm font-bold text-white">{userName}</h3>
+                                <p className="text-xs text-zinc-500">Session Transcript</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <ScrollArea className="flex-1 p-4 relative">
+                        {groupedMessages.length === 0 ? (
+                            <div className="h-full flex flex-col items-center justify-center text-center text-zinc-500 p-4">
+                                <p className="text-sm">No messages yet.</p>
+                                <p className="text-xs mt-1">Start the call to begin conversation.</p>
+                            </div>
+                        ) : (
+                            <div className="space-y-4 pb-4">
+                                {[...groupedMessages].reverse().map((msg, i) => (
+                                    <div
+                                        key={i}
+                                        className={cn(
+                                            "flex flex-col gap-1 max-w-[90%] text-sm",
+                                            msg.role === 'assistant' ? "self-start" : "self-end items-end"
+                                        )}
+                                    >
+                                        <span className="text-[10px] text-zinc-500 capitalize px-1">{msg.role}</span>
+                                        <div className={cn(
+                                            "px-4 py-3 rounded-2xl",
+                                            msg.role === 'assistant'
+                                                ? "bg-zinc-800 text-zinc-200 rounded-tl-none"
+                                                : "bg-blue-600 text-white rounded-tr-none"
+                                        )}>
+                                            {msg.content}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </ScrollArea>
+                </div>
+            </div>
+        </AnimatedContent>
+    );
 }
 
-export default CompanionComponent
+export default CompanionComponent;

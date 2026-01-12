@@ -52,3 +52,16 @@ export const getCompanion = async (id: string) => {
 
     return data[0];
 }
+
+export const addToSessionHistory = async (companionId: string) => {
+    // Placeholder for actual session history tracking
+    // In a real app, you'd insert a record into a 'Sessions' table
+    // For now, we'll just log it or update a counter
+    const supabase = createSupabaseClient();
+    // Example: await supabase.from('Sessions').insert({ companion_id: companionId, ... })
+    console.log(`Session ended for companion ${companionId}`);
+
+    // We can also increment the message count of the companion as a proxy for activity
+    // await supabase.rpc('increment_message_count', { row_id: companionId });
+    return true;
+}

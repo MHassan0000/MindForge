@@ -1,11 +1,11 @@
 import { getCompanion } from "@/lib/actions/companion.actions";
 import { currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
-import { subjectsColors } from "@/constants";
+import { getSubjectColor } from "@/lib/utils";
 import AnimatedContent from "@/components/ui/shared/AnimatedContent";
 import { Clock, BookOpen, ArrowLeft, Info, MessageSquare } from "lucide-react";
 import Link from "next/link";
-import CompanionComponent from "@/components/ui/shared/CompanionComponent";
+import CompanionComponent from "@/components/ui/shared/CompanionComponent"; // Cleaned up import
 
 interface CompanionSessionPageProps {
     params: Promise<{ id: string }>;
@@ -20,7 +20,7 @@ const CompanionSession = async ({ params }: CompanionSessionPageProps) => {
     if (!companion || !companion.name) return redirect('/companion');
 
     const { name, subject, topic, duration } = companion;
-    const color = subjectsColors[subject as keyof typeof subjectsColors] || "#ffffff";
+    const color = getSubjectColor(subject) || "#ffffff";
 
     return (
         <main className="min-h-screen bg-black text-white pt-24 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto flex flex-col gap-8">
@@ -91,13 +91,19 @@ const CompanionSession = async ({ params }: CompanionSessionPageProps) => {
 
 
 
+                <div className="mt-15">
 
-                {/* <CompanionComponent
-                    {...companion}
-                    companionId={id}
-                    userName={user.firstName!}
-                    userImage={user.imageUrl!}
-                /> */}
+                    <CompanionComponent
+                        companionId={id}
+                        subject={subject}
+                        topic={topic}
+                        name={name}
+                        userName={user.firstName!}
+                        userImage={user.imageUrl!}
+                        style="casual" // Passing default style or fetch from DB if available
+                        voice="male"   // Passing default voice or fetch from DB if available
+                    />
+                </div>
             </AnimatedContent>
         </main >
     )

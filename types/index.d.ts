@@ -80,3 +80,52 @@ interface CompanionComponentProps {
     voice: string;
     style: string;
 }
+
+// Vapi Message Types
+type VapiClientMessageType =
+    | "transcript"
+    | "hang"
+    | "function-call"
+    | "function-call-result"
+    | "speech-update"
+    | "metadata"
+    | "conversation-update"
+    | "model-output"
+    | "voice-input"
+    | "status-update"
+    | "transfer-update"
+    | "tool-calls"
+    | "tool-calls-result"
+    | "user-interrupted"
+    | "language-changed";
+
+type VapiServerMessageType =
+    | "hang"
+    | "function-call"
+    | "end-of-call-report"
+    | "conversation-update"
+    | "transcript"
+    | "speech-update"
+    | "status-update"
+    | "tool-calls"
+    | "transfer-update"
+    | "model-output"
+    | "user-interrupted"
+    | "language-changed"
+    | "voice-input"
+    | "assistant-request"
+    | "phone-call-control"
+    | "transfer-destination-request";
+
+interface VapiMessage {
+    type: string;
+    role: "user" | "system" | "assistant";
+    transcriptType?: "final" | "partial";
+    transcript?: string;
+}
+
+interface VapiAssistantOverrides {
+    variableValues?: Record<string, string>;
+    clientMessages?: readonly VapiClientMessageType[];
+    serverMessages?: readonly VapiServerMessageType[];
+}
