@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Search } from "lucide-react";
 import { formUrlQuery, removeKeysFromUrlQuery } from "@jsmastery/utils";
 import { Input } from "@/components/ui/input";
@@ -10,33 +10,39 @@ const SearchInput = () => {
     const pathname = usePathname();
     const router = useRouter();
     const searchParams = useSearchParams();
-    const query = searchParams.get("topic") || "";
+    const initialQuery = searchParams.get("topic") || "";
 
-    const [searchQuery, setSearchQuery] = useState(query);
+    const [searchQuery, setSearchQuery] = useState(initialQuery);
+    const isFirstRender = useRef(true);
 
     useEffect(() => {
+        // Skip the first render to prevent initial navigation
+        if (isFirstRender.current) {
+            isFirstRender.current = false;
+            return;
+        }
+
         const delayDebounceFn = setTimeout(() => {
+            const currentParams = searchParams.toString();
+
             if (searchQuery) {
                 const newUrl = formUrlQuery({
-                    params: searchParams.toString(),
+                    params: currentParams,
                     key: "topic",
                     value: searchQuery,
                 });
-
                 router.push(newUrl, { scroll: false });
             } else {
-
                 const newUrl = removeKeysFromUrlQuery({
-                    params: searchParams.toString(),
+                    params: currentParams,
                     keysToRemove: ["topic"],
                 });
-
                 router.push(newUrl, { scroll: false });
             }
         }, 500);
 
         return () => clearTimeout(delayDebounceFn);
-    }, [searchQuery, router, searchParams]);
+    }, [searchQuery]); // Only depend on searchQuery, not searchParams
 
     return (
         <div className="relative w-full md:w-[300px]">

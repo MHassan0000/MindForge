@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
     Select,
     SelectContent,
@@ -15,26 +15,35 @@ import { formUrlQuery, removeKeysFromUrlQuery } from "@jsmastery/utils";
 const SubjectFilter = () => {
     const router = useRouter();
     const searchParams = useSearchParams();
-    const query = searchParams.get("subject") || "";
+    const initialSubject = searchParams.get("subject") || "";
 
-    const [subject, setSubject] = useState(query);
+    const [subject, setSubject] = useState(initialSubject);
+    const isFirstRender = useRef(true);
 
     useEffect(() => {
+        // Skip the first render to prevent initial navigation
+        if (isFirstRender.current) {
+            isFirstRender.current = false;
+            return;
+        }
+
+        const currentParams = searchParams.toString();
         let newUrl = "";
+
         if (subject === "all" || !subject) {
             newUrl = removeKeysFromUrlQuery({
-                params: searchParams.toString(),
+                params: currentParams,
                 keysToRemove: ["subject"],
             });
         } else {
             newUrl = formUrlQuery({
-                params: searchParams.toString(),
+                params: currentParams,
                 key: "subject",
                 value: subject,
             });
         }
         router.push(newUrl, { scroll: false });
-    }, [subject, router, searchParams]);
+    }, [subject]); // Only depend on subject, not searchParams
 
     return (
         <div className="w-full md:w-[200px]">
