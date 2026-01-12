@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState, useCallback } from 'react'
+import { useEffect, useRef, useState, useCallback, useMemo } from 'react'
 import { cn, configureAssistant, getSubjectColor } from "@/lib/utils";
 import getVapi from "@/lib/vapi/vapi.sdk";
 import Image from "next/image";
@@ -19,12 +19,6 @@ enum CallStatus {
     FINISHED = 'FINISHED',
 }
 
-// Group consecutive messages from the same role
-interface GroupedMessage {
-    role: "user" | "system" | "assistant";
-    content: string;
-}
-
 const CompanionComponent = ({ companionId, subject, topic, name, userName, userImage, style, voice }: CompanionComponentProps) => {
     const [callStatus, setCallStatus] = useState<CallStatus>(CallStatus.INACTIVE);
     const [isSpeaking, setIsSpeaking] = useState(false);
@@ -33,18 +27,21 @@ const CompanionComponent = ({ companionId, subject, topic, name, userName, userI
 
     const lottieRef = useRef<LottieRefCurrentProps>(null);
 
-    // Group consecutive messages from the same role into single paragraphs
-    const groupedMessages = messages.reduce<GroupedMessage[]>((acc, msg) => {
-        const lastMsg = acc[acc.length - 1];
-        if (lastMsg && lastMsg.role === msg.role) {
-            // Append to existing message from same role
-            lastMsg.content += ' ' + msg.content;
-        } else {
-            // Start new message group
-            acc.push({ role: msg.role, content: msg.content });
+
+    const groupedMessages = useMemo(() => {
+        const result: SavedMessage[] = [];
+        for (const msg of messages) {
+            const lastMsg = result[result.length - 1];
+            if (lastMsg && lastMsg.role === msg.role) {
+                // Append to existing message from same role
+                lastMsg.content += ' ' + msg.content;
+            } else {
+                // Start new message group
+                result.push({ role: msg.role, content: msg.content });
+            }
         }
-        return acc;
-    }, []);
+        return result;
+    }, [messages]);
 
     useEffect(() => {
         if (lottieRef.current) {
@@ -74,9 +71,16 @@ const CompanionComponent = ({ companionId, subject, topic, name, userName, userI
         };
 
         const onMessage = (message: VapiMessage) => {
+
             if (message.type === 'transcript' && message.transcriptType === 'final') {
-                const newMessage: SavedMessage = { role: message.role, content: message.transcript || "" }
-                setMessages((prev) => [newMessage, ...prev])
+                if (message.role === 'user' || message.role === 'assistant') {
+                    const newMessage: SavedMessage = {
+                        role: message.role,
+                        content: message.transcript || ""
+                    };
+                    // Append to end to maintain chronological order
+                    setMessages((prev) => [...prev, newMessage]);
+                }
             }
         };
 
@@ -116,18 +120,33 @@ const CompanionComponent = ({ companionId, subject, topic, name, userName, userI
     }, []);
 
     const handleCall = useCallback(async () => {
-        try {
-            setCallStatus(CallStatus.CONNECTING);
+        setCallStatus(CallStatus.CONNECTING);
+        setMessages([]);
 
-            const vapi = getVapi();
-            const assistantConfig = configureAssistant(voice, style);
+        const vapi = getVapi();
+        const assistantConfig = configureAssistant(voice, style);
 
-            await vapi.start(assistantConfig, {
-                variableValues: { subject, topic, style },
-            });
-        } catch {
-            setCallStatus(CallStatus.INACTIVE);
+        // Retry logic for flaky first connections
+        const maxRetries = 2;
+        let lastError: unknown;
+
+        for (let attempt = 0; attempt <= maxRetries; attempt++) {
+            try {
+                await vapi.start(assistantConfig, {
+                    variableValues: { subject, topic, style },
+                });
+                return; // Success - exit
+            } catch (e) {
+                lastError = e;
+                if (attempt < maxRetries) {
+                    // Wait before retry
+                    await new Promise(resolve => setTimeout(resolve, 500));
+                }
+            }
         }
+
+        // All retries failed
+        setCallStatus(CallStatus.INACTIVE);
     }, [voice, style, subject, topic]);
 
     const handleDisconnect = useCallback(() => {
@@ -174,7 +193,7 @@ const CompanionComponent = ({ companionId, subject, topic, name, userName, userI
                                     height={100}
                                     className="drop-shadow-lg"
                                     onError={(e) => {
-                                        (e.target as HTMLImageElement).src = '/images/brainlogo2.png';
+                                        (e.target as HTMLImageElement).src = '/icons/user.png';
                                     }}
                                 />
                             </div>
@@ -200,7 +219,7 @@ const CompanionComponent = ({ companionId, subject, topic, name, userName, userI
                                         width={60}
                                         height={60}
                                         onError={(e) => {
-                                            (e.target as HTMLImageElement).src = '/images/brainlogo2.png';
+                                            (e.target as HTMLImageElement).src = '/icons/user.png';
                                         }}
                                     />
                                 </div>
@@ -278,7 +297,7 @@ const CompanionComponent = ({ companionId, subject, topic, name, userName, userI
                         </div>
                     </div>
 
-                    <ScrollArea className="flex-1 p-4 relative">
+                    <ScrollArea className="flex-1 p-4">
                         {groupedMessages.length === 0 ? (
                             <div className="h-full flex flex-col items-center justify-center text-center text-zinc-500 p-4">
                                 <p className="text-sm">No messages yet.</p>
@@ -286,12 +305,12 @@ const CompanionComponent = ({ companionId, subject, topic, name, userName, userI
                             </div>
                         ) : (
                             <div className="space-y-4 pb-4">
-                                {[...groupedMessages].reverse().map((msg, i) => (
+                                {groupedMessages.map((msg, i) => (
                                     <div
                                         key={i}
                                         className={cn(
                                             "flex flex-col gap-1 max-w-[90%] text-sm",
-                                            msg.role === 'assistant' ? "self-start" : "self-end items-end"
+                                            msg.role === 'assistant' ? "self-start" : "self-end items-end ml-auto"
                                         )}
                                     >
                                         <span className="text-[10px] text-zinc-500 capitalize px-1">{msg.role}</span>
