@@ -19,13 +19,15 @@ enum CallStatus {
     FINISHED = 'FINISHED',
 }
 
-const CompanionComponent = ({ companionId, subject, topic, name, userName, userImage, style, voice }: CompanionComponentProps) => {
+const CompanionComponent = ({ companionId, subject, topic, name, userName, userImage, style, voice, duration }: CompanionComponentProps) => {
     const [callStatus, setCallStatus] = useState<CallStatus>(CallStatus.INACTIVE);
     const [isSpeaking, setIsSpeaking] = useState(false);
     const [isMuted, setIsMuted] = useState(false);
     const [messages, setMessages] = useState<SavedMessage[]>([]);
+    const [timeRemaining, setTimeRemaining] = useState<number>(duration * 60); // Convert minutes to seconds
 
     const lottieRef = useRef<LottieRefCurrentProps>(null);
+    const timerRef = useRef<NodeJS.Timeout | null>(null);
 
 
     const groupedMessages = useMemo(() => {
@@ -107,6 +109,53 @@ const CompanionComponent = ({ companionId, subject, topic, name, userName, userI
             vapi.off('speech-end', onSpeechEnd);
         }
     }, [companionId]);
+
+    // Session duration timer
+    useEffect(() => {
+        if (callStatus === CallStatus.ACTIVE) {
+            // Start countdown timer
+            timerRef.current = setInterval(() => {
+                setTimeRemaining((prev) => {
+                    if (prev <= 1) {
+                        // Time's up - auto-end the session
+                        try {
+                            const vapi = getVapi();
+                            vapi.stop();
+                        } catch {
+                            // Silent fail
+                        }
+                        setCallStatus(CallStatus.FINISHED);
+                        addToSessionHistory(companionId);
+                        return 0;
+                    }
+                    return prev - 1;
+                });
+            }, 1000);
+        } else {
+            // Clear timer when not active
+            if (timerRef.current) {
+                clearInterval(timerRef.current);
+                timerRef.current = null;
+            }
+            // Reset timer when starting fresh
+            if (callStatus === CallStatus.INACTIVE) {
+                setTimeRemaining(duration * 60);
+            }
+        }
+
+        return () => {
+            if (timerRef.current) {
+                clearInterval(timerRef.current);
+            }
+        };
+    }, [callStatus, companionId, duration]);
+
+    // Format time remaining as MM:SS
+    const formatTime = (seconds: number) => {
+        const mins = Math.floor(seconds / 60);
+        const secs = seconds % 60;
+        return `${mins}:${secs.toString().padStart(2, '0')}`;
+    };
 
     const toggleMicrophone = useCallback(() => {
         try {
@@ -241,6 +290,15 @@ const CompanionComponent = ({ companionId, subject, topic, name, userName, userI
                                     callStatus === CallStatus.FINISHED ? "Session Ended" :
                                         "Ready to Start"}
                         </p>
+                        {/* Timer Display */}
+                        {callStatus === CallStatus.ACTIVE && (
+                            <p className={cn(
+                                "text-lg font-mono font-bold px-4 py-1 rounded-full",
+                                timeRemaining <= 60 ? "bg-red-500/20 text-red-400" : "bg-zinc-800 text-zinc-300"
+                            )}>
+                                {formatTime(timeRemaining)}
+                            </p>
+                        )}
                     </div>
 
                     {/* Footer Controls */}

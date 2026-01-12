@@ -79,6 +79,7 @@ interface CompanionComponentProps {
     userImage: string;
     voice: string;
     style: string;
+    duration: number; // Session duration in minutes
 }
 
 // Vapi Message Types

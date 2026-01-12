@@ -19,7 +19,7 @@ const CompanionSession = async ({ params }: CompanionSessionPageProps) => {
     if (!user) return redirect('/sign-in');
     if (!companion || !companion.name) return redirect('/companion');
 
-    const { name, subject, topic, duration } = companion;
+    const { name, subject, topic, duration, voice, style } = companion;
     const color = getSubjectColor(subject) || "#ffffff";
 
     return (
@@ -90,7 +90,6 @@ const CompanionSession = async ({ params }: CompanionSessionPageProps) => {
 
 
 
-
                 <div className="mt-15">
 
                     <CompanionComponent
@@ -100,8 +99,9 @@ const CompanionSession = async ({ params }: CompanionSessionPageProps) => {
                         name={name}
                         userName={user.firstName!}
                         userImage={user.imageUrl!}
-                        style="casual" // Passing default style or fetch from DB if available
-                        voice="male"   // Passing default voice or fetch from DB if available
+                        style={style || "casual"}
+                        voice={voice || "male"}
+                        duration={duration || 10}
                     />
                 </div>
             </AnimatedContent>
