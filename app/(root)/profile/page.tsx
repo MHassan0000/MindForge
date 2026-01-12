@@ -77,10 +77,10 @@ const Profile = async () => {
 
             {/* Content Sections */}
             <div className="space-y-8">
-                {/* Recent Sessions */}
+                {/* My Sessions */}
                 <section>
                     <CompanionList
-                        title="Recent Sessions"
+                        title="My Sessions"
                         items={sessionHistory}
                     />
                 </section>
@@ -88,7 +88,7 @@ const Profile = async () => {
                 {/* My Companions */}
                 <section>
                     <CompanionList
-                        title="My Created Companions"
+                        title="My Companions"
                         items={companions}
                     />
                 </section>

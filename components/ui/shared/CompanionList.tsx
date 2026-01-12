@@ -1,6 +1,4 @@
 "use client";
-
-import React from "react";
 import { motion } from "framer-motion";
 import { ArrowRight, ChevronRight, BookOpen } from "lucide-react";
 import Link from "next/link";
@@ -24,9 +22,11 @@ const CompanionList = ({ items, className, title }: CompanionListProps) => {
             {/* Header */}
             <div className="flex items-center justify-between mb-8">
                 <h2 className="text-2xl font-bold text-white">{title || "Recently completed lessons"}</h2>
-                <button className="text-sm text-gray-400 hover:text-white flex items-center gap-1 transition-colors">
-                    View all <ArrowRight className="w-4 h-4" />
-                </button>
+                <Link href="/companion">
+                    <button className="text-sm text-gray-400 hover:text-white flex items-center gap-1 transition-colors">
+                        View all <ArrowRight className="w-4 h-4" />
+                    </button>
+                </Link>
             </div>
 
             {/* List Header Labels */}
@@ -50,12 +50,14 @@ const CompanionList = ({ items, className, title }: CompanionListProps) => {
                         >
                             <div className="flex items-center gap-4">
                                 {/* Avatar/Icon Box */}
-                                <div
-                                    className="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0"
-                                    style={{ backgroundColor: color }}
-                                >
-                                    <BookOpen className="w-6 h-6 text-black/70" />
-                                </div>
+                                <Link href={`/companion/${item.id}`}>
+                                    <div
+                                        className="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 cursor-pointer"
+                                        style={{ backgroundColor: color }}
+                                    >
+                                        <BookOpen className="w-6 h-6 text-black/70" />
+                                    </div>
+                                </Link>
 
                                 {/* Text Info */}
                                 <div>
@@ -69,7 +71,7 @@ const CompanionList = ({ items, className, title }: CompanionListProps) => {
                             {/* Subject Badge */}
                             <div className="flex items-center justify-between sm:w-auto w-full">
                                 <span className="px-3 py-1 rounded-full text-xs font-bold border border-white/10 bg-black/40 text-gray-300 uppercase tracking-wide">
-                                    <Link href={`/companion/${item.id}`}>
+                                    <Link href={`/companion`}>
                                         {item.subject}
                                     </Link>
                                 </span>

@@ -1,9 +1,8 @@
 "use client";
 
-import React from "react";
 import { motion } from "framer-motion";
 import { Play, Clock, Bookmark } from "lucide-react";
-import { cn, getSubjectColor } from "@/lib/utils";
+import { getSubjectColor } from "@/lib/utils";
 import Link from "next/link";
 
 interface CompanionCardProps {
