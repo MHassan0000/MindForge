@@ -24,10 +24,11 @@ const CompanionComponent = ({ companionId, subject, topic, name, userName, userI
     const [isSpeaking, setIsSpeaking] = useState(false);
     const [isMuted, setIsMuted] = useState(false);
     const [messages, setMessages] = useState<SavedMessage[]>([]);
-    const [timeRemaining, setTimeRemaining] = useState<number>(duration * 60); // Convert minutes to seconds
+    const [timeRemaining, setTimeRemaining] = useState<number>(duration * 60);
 
     const lottieRef = useRef<LottieRefCurrentProps>(null);
     const timerRef = useRef<NodeJS.Timeout | null>(null);
+    const hasWarnedRef = useRef<boolean>(false); // Track if 1-min warning was given
 
 
     const groupedMessages = useMemo(() => {
@@ -116,11 +117,25 @@ const CompanionComponent = ({ companionId, subject, topic, name, userName, userI
             // Start countdown timer
             timerRef.current = setInterval(() => {
                 setTimeRemaining((prev) => {
-                    if (prev <= 1) {
-                        // Time's up - auto-end the session
+                    // 1 minute warning - only once
+                    if (prev <= 60 && prev > 55 && !hasWarnedRef.current) {
+                        hasWarnedRef.current = true;
                         try {
                             const vapi = getVapi();
-                            vapi.stop();
+                            vapi.say("Just a heads up, we have about one minute left in our session.", false);
+                        } catch {
+                            // Silent fail
+                        }
+                    }
+
+                    if (prev <= 1) {
+                        // Time's up - inform user and end session
+                        try {
+                            const vapi = getVapi();
+                            vapi.say("Our time is up for today. Great session! See you next time.", true);
+                            setTimeout(() => {
+                                vapi.stop();
+                            }, 3000);
                         } catch {
                             // Silent fail
                         }
@@ -137,9 +152,10 @@ const CompanionComponent = ({ companionId, subject, topic, name, userName, userI
                 clearInterval(timerRef.current);
                 timerRef.current = null;
             }
-            // Reset timer when starting fresh
+            // Reset timer and warning flag when starting fresh
             if (callStatus === CallStatus.INACTIVE) {
                 setTimeRemaining(duration * 60);
+                hasWarnedRef.current = false;
             }
         }
 
