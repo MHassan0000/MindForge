@@ -24,16 +24,16 @@ export const NavItems = [
         href: "/companion"
     },
     {
-        name: "Reviews",
-        href: "/reviews"
+        name: "Affiliate",
+        href: "/affiliate"
     },
     {
         name: "Pricing",
         href: "/subscription"
     },
     {
-        name: "Affiliate",
-        href: "/affiliate"
+        name: "My Journey",
+        href: "/profile"
     },
 
 ]

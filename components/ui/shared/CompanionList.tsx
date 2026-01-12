@@ -15,14 +15,15 @@ interface CompanionListProps {
         duration: number;
     }>;
     className?: string;
+    title?: string;
 }
 
-const CompanionList = ({ items, className }: CompanionListProps) => {
+const CompanionList = ({ items, className, title }: CompanionListProps) => {
     return (
         <div className={`bg-white/5 backdrop-blur-sm border border-white/5 rounded-3xl p-8 ${className}`}>
             {/* Header */}
             <div className="flex items-center justify-between mb-8">
-                <h2 className="text-2xl font-bold text-white">Recently completed lessons</h2>
+                <h2 className="text-2xl font-bold text-white">{title || "Recently completed lessons"}</h2>
                 <button className="text-sm text-gray-400 hover:text-white flex items-center gap-1 transition-colors">
                     View all <ArrowRight className="w-4 h-4" />
                 </button>

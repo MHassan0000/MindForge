@@ -100,7 +100,7 @@ export const getUserSessions = async (userId: string, limit = 10): Promise<Compa
         .filter((c): c is Companion => c != null);
 }
 
-export const getUserCompanions = async (userId: string) => {
+export const getUserCompanions = async (userId: string): Promise<Companion[]> => {
     const supabase = createSupabaseClient();
     const { data, error } = await supabase
         .from('Companions')
@@ -109,5 +109,5 @@ export const getUserCompanions = async (userId: string) => {
 
     if (error) throw new Error(error.message);
 
-    return data;
+    return data as Companion[];
 }
