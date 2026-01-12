@@ -54,14 +54,54 @@ export const getCompanion = async (id: string) => {
 }
 
 export const addToSessionHistory = async (companionId: string) => {
-    // Placeholder for actual session history tracking
-    // In a real app, you'd insert a record into a 'Sessions' table
-    // For now, we'll just log it or update a counter
+    const { userId } = await auth();
     const supabase = createSupabaseClient();
-    // Example: await supabase.from('Sessions').insert({ companion_id: companionId, ... })
-    console.log(`Session ended for companion ${companionId}`);
+    const { data, error } = await supabase.from('Session_History')
+        .insert({
+            companion_id: companionId,
+            user_id: userId,
+        })
 
-    // We can also increment the message count of the companion as a proxy for activity
-    // await supabase.rpc('increment_message_count', { row_id: companionId });
-    return true;
+    if (error) throw new Error(error.message);
+
+    return data;
+}
+
+export const getRecentSessions = async (limit = 10) => {
+    const supabase = createSupabaseClient();
+    const { data, error } = await supabase
+        .from('Session_History')
+        .select(`Companions:companion_id (*)`)
+        .order('created_at', { ascending: false })
+        .limit(limit)
+
+    if (error) throw new Error(error.message);
+
+    return data.map(({ Companions }) => Companions);
+}
+
+export const getUserSessions = async (userId: string, limit = 10) => {
+    const supabase = createSupabaseClient();
+    const { data, error } = await supabase
+        .from('Session_History')
+        .select(`Companions:companion_id (*)`)
+        .eq('user_id', userId)
+        .order('created_at', { ascending: false })
+        .limit(limit)
+
+    if (error) throw new Error(error.message);
+
+    return data.map(({ Companions }) => Companions);
+}
+
+export const getUserCompanions = async (userId: string) => {
+    const supabase = createSupabaseClient();
+    const { data, error } = await supabase
+        .from('Companions')
+        .select()
+        .eq('author', userId)
+
+    if (error) throw new Error(error.message);
+
+    return data;
 }

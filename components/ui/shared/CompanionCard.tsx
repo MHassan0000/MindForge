@@ -39,7 +39,7 @@ const CompanionCard = ({ item }: CompanionCardProps) => {
             {/* Header: Subject Badge & Bookmark (Optional placeholder for now) */}
             <div className="flex justify-between items-start mb-4">
                 <span
-                    className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider text-black"
+                    className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider text-white"
                     style={{ backgroundColor: item.color }}
                 >
                     {item.subject}

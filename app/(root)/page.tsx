@@ -2,9 +2,12 @@ import Hero from "@/components/ui/shared/Hero";
 import CompanionCard from "@/components/ui/shared/CompanionCard";
 import CompanionList from "@/components/ui/shared/CompanionList";
 import Cta from "@/components/ui/shared/Cta";
-import { recentSessions } from "@/constants";
+import { getRecentSessions, getAllCompanions } from "@/lib/actions/companion.actions";
 
-export default function Home() {
+export default async function Home() {
+
+  const companions = await getAllCompanions({ limit: 3 });
+  const recentSessions = await getRecentSessions();
   return (
     <main className="min-h-screen bg-black text-white selection:bg-blue-500/30">
       <Hero />
@@ -17,8 +20,8 @@ export default function Home() {
           </div>
           {/* Scrollable container for cards on mobile, grid on desktop */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {recentSessions.slice(0, 3).map((session) => (
-              <CompanionCard key={session.id} item={session} />
+            {companions.map((companion) => (
+              <CompanionCard key={companion.id} item={companion} />
             ))}
           </div>
         </section>
