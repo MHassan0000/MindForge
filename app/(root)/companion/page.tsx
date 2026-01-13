@@ -1,9 +1,10 @@
-import { getAllCompanions } from "@/lib/actions/companion.actions";
+import { getAllCompanions, getUserBookmarkIds } from "@/lib/actions/companion.actions";
 import CompanionCard from "@/components/ui/shared/CompanionCard";
 import SearchInput from "@/components/ui/shared/SearchInput";
 import SubjectFilter from "@/components/ui/shared/SubjectFilter";
 import AnimatedContent from "@/components/ui/shared/AnimatedContent";
 import { Sparkles } from "lucide-react";
+
 interface PageProps {
     searchParams: Promise<{
         subject?: string;
@@ -18,7 +19,10 @@ const CompanionsLibrary = async (props: PageProps) => {
     const subject = filters.subject ? String(filters.subject) : "";
     const topic = filters.topic ? String(filters.topic) : "";
 
-    const companions = await getAllCompanions({ subject, topic });
+    const [companions, bookmarkIds] = await Promise.all([
+        getAllCompanions({ subject, topic }),
+        getUserBookmarkIds()
+    ]);
 
     return (
         <main className="min-h-screen pt-24 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-12">
@@ -49,10 +53,11 @@ const CompanionsLibrary = async (props: PageProps) => {
             <AnimatedContent>
                 {companions.length > 0 ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                        {companions.map((companion: any) => (
+                        {companions.map((companion) => (
                             <CompanionCard
                                 key={companion.id}
                                 item={companion}
+                                isBookmarked={bookmarkIds.has(companion.id)}
                             />
                         ))}
                     </div>

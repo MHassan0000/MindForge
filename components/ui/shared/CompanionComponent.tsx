@@ -252,7 +252,7 @@ const CompanionComponent = ({ companionId, subject, topic, name, userName, userI
                                     callStatus === CallStatus.ACTIVE ? 'opacity-0 scale-90' : 'opacity-100 scale-100'
                                 )}
                             >
-                                <div className="relative w-40 h-40 sm:w-48 sm:h-48 rounded-full flex items-center justify-center bg-black/40 ring-4 ring-white/10 shadow-xl backdrop-blur-sm">
+                                <div className="relative w-40 h-40 sm:w-48 sm:h-48 rounded-full flex items-center justify-center bg-white ring-4 ring-white/10 shadow-xl backdrop-blur-sm">
                                     <Image
                                         src={`/icons/${subject}.svg`}
                                         alt={subject}
@@ -271,7 +271,7 @@ const CompanionComponent = ({ companionId, subject, topic, name, userName, userI
                                 'absolute inset-0 flex items-center justify-center transition-all duration-700 ease-in-out',
                                 callStatus === CallStatus.ACTIVE ? 'opacity-100 scale-100' : 'opacity-0 scale-110'
                             )}>
-                                <div className="relative w-56 h-56 sm:w-64 sm:h-64 rounded-full flex items-center justify-center bg-black/60 ring-1 ring-white/20 shadow-2xl backdrop-blur-md">
+                                <div className="relative w-56 h-56 sm:w-64 sm:h-64 rounded-full flex items-center justify-center bg-white ring-1 ring-white/20 shadow-2xl backdrop-blur-md">
                                     <Lottie
                                         lottieRef={lottieRef}
                                         animationData={soundwaves}

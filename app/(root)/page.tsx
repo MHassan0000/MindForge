@@ -2,12 +2,16 @@ import Hero from "@/components/ui/shared/Hero";
 import CompanionCard from "@/components/ui/shared/CompanionCard";
 import CompanionList from "@/components/ui/shared/CompanionList";
 import Cta from "@/components/ui/shared/Cta";
-import { getRecentSessions, getAllCompanions } from "@/lib/actions/companion.actions";
+import { getRecentSessions, getAllCompanions, getUserBookmarkIds } from "@/lib/actions/companion.actions";
 
 export default async function Home() {
 
-  const companions = await getAllCompanions({ limit: 3 });
-  const recentSessions = await getRecentSessions();
+  const [companions, recentSessions, bookmarkIds] = await Promise.all([
+    getAllCompanions({ limit: 3 }),
+    getRecentSessions(),
+    getUserBookmarkIds()
+  ]);
+
   return (
     <main className="min-h-screen bg-black text-white selection:bg-blue-500/30">
       <Hero />
@@ -21,7 +25,11 @@ export default async function Home() {
           {/* Scrollable container for cards on mobile, grid on desktop */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {companions.map((companion) => (
-              <CompanionCard key={companion.id} item={companion} />
+              <CompanionCard
+                key={companion.id}
+                item={companion}
+                isBookmarked={bookmarkIds.has(companion.id)}
+              />
             ))}
           </div>
         </section>

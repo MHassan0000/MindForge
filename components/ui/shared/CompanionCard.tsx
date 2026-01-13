@@ -1,9 +1,10 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Play, Clock, Bookmark } from "lucide-react";
+import { Play, Clock } from "lucide-react";
 import { getSubjectColor } from "@/lib/utils";
 import Link from "next/link";
+import BookmarkButton from "./BookmarkButton";
 
 interface CompanionCardProps {
     item: {
@@ -12,11 +13,12 @@ interface CompanionCardProps {
         name: string;
         topic: string;
         duration: number;
-        color: string;
+        color?: string;
     };
+    isBookmarked?: boolean;
 }
 
-const CompanionCard = ({ item }: CompanionCardProps) => {
+const CompanionCard = ({ item, isBookmarked = false }: CompanionCardProps) => {
     const color = getSubjectColor(item.subject) || item.color || "#6366f1";
 
     return (
@@ -38,7 +40,7 @@ const CompanionCard = ({ item }: CompanionCardProps) => {
                 style={{ backgroundColor: color }}
             />
 
-            {/* Header: Subject Badge & Bookmark (Optional placeholder for now) */}
+            {/* Header: Subject Badge & Bookmark */}
             <div className="flex justify-between items-start mb-4">
                 <span
                     className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider text-black shadow-lg"
@@ -46,10 +48,11 @@ const CompanionCard = ({ item }: CompanionCardProps) => {
                 >
                     {item.subject}
                 </span>
-                {/* Simple bookmark icon placeholder */}
-                <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center hover:bg-white/10 cursor-pointer transition-colors">
-                    <Bookmark className="w-4 h-4 text-white" />
-                </div>
+                {/* Interactive Bookmark Button */}
+                <BookmarkButton
+                    companionId={item.id}
+                    initialBookmarked={isBookmarked}
+                />
             </div>
 
             {/* Content */}

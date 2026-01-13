@@ -3,11 +3,12 @@ import { redirect } from "next/navigation";
 import {
     getUserCompanions,
     getUserSessions,
+    getBookmarkedCompanions,
 } from "@/lib/actions/companion.actions";
 import { getUserPlan } from "@/lib/actions/subscription.actions";
 import Image from "next/image";
 import CompanionList from "@/components/ui/shared/CompanionList";
-import { GraduationCap, BookOpen, Crown } from "lucide-react";
+import { GraduationCap, BookOpen, Crown, Bookmark } from "lucide-react";
 import AnimatedProfileContent from "@/components/ui/shared/AnimatedProfileContent";
 import Link from "next/link";
 
@@ -17,10 +18,11 @@ const Profile = async () => {
     if (!user) redirect("/sign-in");
 
     // Fetch data in parallel
-    const [companions, sessionHistory, userPlan] = await Promise.all([
+    const [companions, sessionHistory, userPlan, bookmarks] = await Promise.all([
         getUserCompanions(user.id),
         getUserSessions(user.id),
-        getUserPlan()
+        getUserPlan(),
+        getBookmarkedCompanions(user.id)
     ]);
 
     // Plan badge color mapping
@@ -71,7 +73,7 @@ const Profile = async () => {
                     </div>
 
                     {/* Stats Cards */}
-                    <div className="flex gap-4 sm:gap-6">
+                    <div className="flex gap-4 sm:gap-6 flex-wrap justify-center">
                         <div className="p-4 rounded-2xl bg-white/5 border border-white/10 flex flex-col items-center min-w-[100px] backdrop-blur-sm">
                             <div className="w-10 h-10 rounded-full bg-green-500/20 flex items-center justify-center mb-2 text-green-400">
                                 <BookOpen className="w-5 h-5" />
@@ -87,6 +89,17 @@ const Profile = async () => {
                             <span className="text-2xl font-bold text-white">{companions.length}</span>
                             <span className="text-xs text-zinc-400 font-medium">Created</span>
                         </div>
+
+                        {/* Bookmarks Card - Clickable */}
+                        <Link href="/bookmarks" className="group">
+                            <div className="p-4 rounded-2xl bg-white/5 border border-white/10 flex flex-col items-center min-w-[100px] backdrop-blur-sm hover:border-yellow-500/30 hover:bg-yellow-500/5 transition-all">
+                                <div className="w-10 h-10 rounded-full bg-yellow-500/20 flex items-center justify-center mb-2 text-yellow-400 group-hover:scale-110 transition-transform">
+                                    <Bookmark className="w-5 h-5" />
+                                </div>
+                                <span className="text-2xl font-bold text-white">{bookmarks.length}</span>
+                                <span className="text-xs text-zinc-400 font-medium">Bookmarks</span>
+                            </div>
+                        </Link>
                     </div>
                 </div>
             </section>

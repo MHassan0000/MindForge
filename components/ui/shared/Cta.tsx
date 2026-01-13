@@ -12,7 +12,7 @@ const Cta = ({ className }: { className?: string }) => {
             className={`relative overflow-hidden rounded-3xl p-8 flex flex-col items-center justify-center text-center gap-6 group ${className}`}
         >
             {/* Dynamic Background */}
-            <div className="absolute inset-0 bg-linear-to-br from-blue-600 via-indigo-600 to-purple-600 opacity-90" />
+            <div className="absolute inset-0  bg-linear-to-b from-black via-zinc-950 to-black opacity-100" />
             <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20" />
 
             {/* Floating elements animation */}

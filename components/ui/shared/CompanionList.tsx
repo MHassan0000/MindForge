@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { ArrowRight, ChevronRight, BookOpen } from "lucide-react";
 import Link from "next/link";
 import { getSubjectColor } from "@/lib/utils";
-
+import Image from "next/image";
 interface CompanionListProps {
     items: Array<{
         id: string;
@@ -41,7 +41,7 @@ const CompanionList = ({ items, className, title }: CompanionListProps) => {
                     const color = getSubjectColor(item.subject) || "#6366f1";
                     return (
                         <motion.div
-                            key={item.id}
+                            key={`${item.id}-${index}`}
                             initial={{ opacity: 0, x: -20 }}
                             whileInView={{ opacity: 1, x: 0 }}
                             transition={{ delay: index * 0.1 }}
@@ -52,10 +52,10 @@ const CompanionList = ({ items, className, title }: CompanionListProps) => {
                                 {/* Avatar/Icon Box */}
                                 <Link href={`/companion/${item.id}`}>
                                     <div
-                                        className="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 cursor-pointer"
-                                        style={{ backgroundColor: color }}
+                                        className="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 cursor-pointer bg-black"
+
                                     >
-                                        <BookOpen className="w-6 h-6 text-black/70" />
+                                        <Image src={`/icons/${item.subject}.svg`} alt={item.subject} width={50} height={50} className="w-6 h-6 invert" />
                                     </div>
                                 </Link>
 

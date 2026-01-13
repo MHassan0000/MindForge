@@ -164,7 +164,7 @@ export const addBookmark = async (companionId: string, path: string) => {
     if (error) {
         throw new Error(error.message);
     }
-    // Revalidate the path to force a re-render of the page
+
 
     revalidatePath(path);
     return data;
@@ -186,16 +186,50 @@ export const removeBookmark = async (companionId: string, path: string) => {
     return data;
 };
 
-// It's almost the same as getUserCompanions, but it's for the bookmarked companions
-export const getBookmarkedCompanions = async (userId: string) => {
+
+export const getBookmarkedCompanions = async (userId: string): Promise<Companion[]> => {
     const supabase = createSupabaseClient();
     const { data, error } = await supabase
         .from("Bookmarks")
-        .select(`Companions:companion_id (*)`) // Notice the (*) to get all the companion data
+        .select(`Companions:companion_id (*)`)
         .eq("user_id", userId);
     if (error) {
         throw new Error(error.message);
     }
-    // We don't need the bookmarks data, so we return only the companions
-    return data.map(({ Companions }) => Companions);
+
+    return (data as { Companions: Companion }[])
+        .map(({ Companions }) => Companions)
+        .filter((c): c is Companion => c != null);
+};
+
+
+export const isBookmarked = async (companionId: string): Promise<boolean> => {
+    const { userId } = await auth();
+    if (!userId) return false;
+
+    const supabase = createSupabaseClient();
+    const { data, error } = await supabase
+        .from("Bookmarks")
+        .select("id")
+        .eq("companion_id", companionId)
+        .eq("user_id", userId)
+        .single();
+
+    if (error) return false;
+    return !!data;
+};
+
+
+export const getUserBookmarkIds = async (): Promise<Set<string>> => {
+    const { userId } = await auth();
+    if (!userId) return new Set();
+
+    const supabase = createSupabaseClient();
+    const { data, error } = await supabase
+        .from("Bookmarks")
+        .select("companion_id")
+        .eq("user_id", userId);
+
+    if (error || !data) return new Set();
+    return new Set(data.map((row) => row.companion_id));
 };
