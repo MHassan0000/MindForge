@@ -17,7 +17,7 @@ const Affiliate = () => {
                             <Zap className="w-3 h-3 fill-current" />
                             <span>Become a Partner</span>
                         </div>
-                        <h1 className="text-4xl sm:text-6xl font-bold text-white tracking-tight leading-tight">
+                        <h1 className="text-4xl sm:text-6xl font-bold text-white tracking-wider leading-tight">
                             Earn while you <span className="text-transparent bg-clip-text bg-linear-to-r from-blue-400 to-purple-500">share knowledge.</span>
                         </h1>
                         <p className="text-lg text-zinc-400 max-w-xl">

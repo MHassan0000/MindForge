@@ -30,11 +30,11 @@ const CompanionsLibrary = async (props: PageProps) => {
             {/* Hero / Header Section */}
             <section className="flex flex-col gap-6 md:flex-row md:items-end justify-between relative z-10">
                 <div className="space-y-4 max-w-2xl">
-                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-medium">
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-lg font-medium">
                         <Sparkles className="w-3 h-3" />
                         <span>AI Learning Companions</span>
                     </div>
-                    <h1 className="text-4xl md:text-5xl font-bold text-white tracking-tight">
+                    <h1 className="text-4xl md:text-5xl font-bold text-white tracking-wider">
                         Explore the <span className="text-transparent bg-clip-text bg-linear-to-r from-yellow-400 to-orange-500">Library</span>
                     </h1>
                     <p className="text-lg text-gray-400 max-w-xl">

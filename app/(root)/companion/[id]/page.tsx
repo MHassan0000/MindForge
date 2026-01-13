@@ -57,7 +57,7 @@ const CompanionSession = async ({ params }: CompanionSessionPageProps) => {
 
                             <div className="space-y-2">
                                 <div className="flex flex-wrap items-center gap-3">
-                                    <h1 className="text-3xl md:text-4xl font-bold text-white tracking-tight">
+                                    <h1 className="text-3xl md:text-4xl font-bold text-white tracking-wider">
                                         {name}
                                     </h1>
                                     <span
