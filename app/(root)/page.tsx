@@ -2,6 +2,7 @@ import Hero from "@/components/ui/shared/Hero";
 import CompanionCard from "@/components/ui/shared/CompanionCard";
 import CompanionList from "@/components/ui/shared/CompanionList";
 import Cta from "@/components/ui/shared/Cta";
+import FeaturesSection from "@/components/ui/shared/FeaturesSection";
 import { getRecentSessions, getAllCompanions, getUserBookmarkIds } from "@/lib/actions/companion.actions";
 
 export default async function Home() {
@@ -13,10 +14,13 @@ export default async function Home() {
   ]);
 
   return (
-    <main className="min-h-screen bg-black text-white selection:bg-blue-500/30">
+    <main className="min-h-screen bg-black text-white selection:bg-blue-500/30 scroll-smooth">
       <Hero />
 
-      <div className="container mx-auto px-4 py-12 space-y-12 max-w-7xl">
+      {/* Features Section - Scroll target for "View Demo" */}
+      <FeaturesSection />
+
+      <div className="container mx-auto px-4 py-12 space-y-12 max-w-7xl mt-32">
         {/* Companion Cards Section */}
         <section>
           <div className="flex items-center justify-between mb-6">
@@ -35,7 +39,7 @@ export default async function Home() {
         </section>
 
         {/* Lower Section: List + CTA */}
-        <section className="flex flex-col lg:flex-row gap-6">
+        <section className="flex flex-col lg:flex-row gap-6 mt-20">
           <CompanionList items={recentSessions} className="lg:w-2/3 w-full" />
           <Cta className="lg:w-1/3 w-full min-h-[400px]" />
         </section>

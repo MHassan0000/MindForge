@@ -12,7 +12,7 @@ const Cta = ({ className }: { className?: string }) => {
             className={`relative overflow-hidden rounded-3xl p-8 flex flex-col items-center justify-center text-center gap-6 group ${className}`}
         >
             {/* Dynamic Background */}
-            <div className="absolute inset-0  bg-linear-to-b from-black via-zinc-950 to-black opacity-100" />
+            <div className="absolute inset-0  bg-white/90" />
             <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20" />
 
             {/* Floating elements animation */}
@@ -33,12 +33,12 @@ const Cta = ({ className }: { className?: string }) => {
                     <Image className="rounded-3xl" src="/images/soundlogo1.png" width={100} height={100} alt="Sound Logo" />
                 </div>
 
-                <h2 className="text-3xl font-bold text-white leading-tight">
+                <h2 className="text-3xl font-bold text-black leading-tight">
                     Create your own<br />
-                    <span className="text-blue-200">AI Companion</span>
+                    <span className="text-black">AI Companion</span>
                 </h2>
 
-                <p className="text-blue-100 text-sm max-w-[200px]">
+                <p className="text-gray-600 text-sm max-w-[200px]">
                     Pick a name, subject, voice and personality - and start learning through voice conversations that feel natural and fun.
                 </p>
             </div>

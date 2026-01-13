@@ -1,7 +1,15 @@
+"use client";
 
 import { Star } from "lucide-react";
 
 const Hero = () => {
+    const scrollToFeatures = () => {
+        const featuresSection = document.getElementById('features');
+        if (featuresSection) {
+            featuresSection.scrollIntoView({ behavior: 'smooth' });
+        }
+    };
+
     return (
         <section className="relative min-h-[80vh] flex flex-col items-center justify-center pt-32 pb-20 px-4 overflow-hidden bg-black">
             {/* Background Gradient/Glow */}
@@ -47,7 +55,10 @@ const Hero = () => {
                 {/* CTA Buttons */}
                 <div className="pt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
 
-                    <button className="px-8 py-4 bg-transparent border border-white/10 text-white font-semibold text-lg rounded-full hover:bg-white/5 transition-all tracking-wider">
+                    <button
+                        onClick={scrollToFeatures}
+                        className="px-8 py-4 bg-transparent border border-white/10 text-white font-semibold text-lg rounded-full hover:bg-white/5 transition-all tracking-wider cursor-pointer"
+                    >
                         View Demo
                     </button>
                 </div>

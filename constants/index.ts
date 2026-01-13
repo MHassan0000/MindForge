@@ -1,3 +1,4 @@
+import { Brain, MessageSquare, Target, Zap, Users, Sparkles } from "lucide-react";
 export const subjects = [
     "maths",
     "language",
@@ -18,6 +19,46 @@ export const subjectsColors = {
 
 
 };
+
+
+export const features = [
+    {
+        icon: Brain,
+        title: "AI-Powered Learning",
+        description: "Personalized tutoring that adapts to your learning style and pace in real-time.",
+        color: "blue",
+    },
+    {
+        icon: MessageSquare,
+        title: "Natural Conversations",
+        description: "Learn through voice-based dialogue, just like talking to a real tutor.",
+        color: "purple",
+    },
+    {
+        icon: Target,
+        title: "Goal-Oriented",
+        description: "Set learning objectives and track your progress with detailed analytics.",
+        color: "green",
+    },
+    {
+        icon: Zap,
+        title: "Instant Feedback",
+        description: "Get real-time corrections and explanations to accelerate your learning.",
+        color: "yellow",
+    },
+    {
+        icon: Users,
+        title: "Expert Companions",
+        description: "Choose from specialized AI tutors across science, maths, languages & more.",
+        color: "pink",
+    },
+    {
+        icon: Sparkles,
+        title: "Adaptive Curriculum",
+        description: "Content that evolves based on your strengths, weaknesses, and interests.",
+        color: "orange",
+    },
+];
 export const NavItems = [
     {
         name: "Companions",

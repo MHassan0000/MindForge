@@ -31,6 +31,8 @@ export const metadata: Metadata = {
   description: "Ai powered learning platform",
 };
 
+import { Toaster } from "@/components/ui/toaster";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -38,11 +40,12 @@ export default function RootLayout({
 }>) {
   return (
     <ClerkProvider afterSignOutUrl={"/"}>
-      <html lang="en">
+      <html lang="en" className="scroll-smooth">
         <body
           className={`${mouseMemoirs.variable} font-mouse-memoirs antialiased`}
         >
           {children}
+          <Toaster />
         </body>
       </html>
     </ClerkProvider>
