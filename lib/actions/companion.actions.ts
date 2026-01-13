@@ -118,11 +118,11 @@ export const newCompanionPermissions = async () => {
 
     let limit = 0;
 
-    if (has({ plan: 'pro' })) {
+    if (has({ plan: 'pro_plan' })) {
         return true;
-    } else if (has({ feature: "3_companion_limit" })) {
+    } else if (has({ feature: "3_active_companions" })) {
         limit = 3;
-    } else if (has({ feature: "10_companion_limit" })) {
+    } else if (has({ feature: "10_active_companions" })) {
         limit = 10;
     }
 
