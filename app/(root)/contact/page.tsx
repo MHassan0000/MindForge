@@ -50,38 +50,16 @@ const ContactPage = () => {
     const onSubmit = async (values: z.infer<typeof formSchema>) => {
         setIsLoading(true);
 
-        const serviceId = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID;
-        const templateId = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID;
-        const publicKey = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY;
-
-        if (!serviceId || !templateId || !publicKey) {
-            console.error("EmailJS Configuration Error: Missing Environment Variables");
-            // Log which one is missing for debugging
-            if (!serviceId) console.error("Missing NEXT_PUBLIC_EMAILJS_SERVICE_ID");
-            if (!templateId) console.error("Missing NEXT_PUBLIC_EMAILJS_TEMPLATE_ID");
-            if (!publicKey) console.error("Missing NEXT_PUBLIC_EMAILJS_PUBLIC_KEY");
-
-            toast({
-                variant: "destructive",
-                title: "Configuration Error",
-                description: "Contact form configuration is missing. Please contact the administrator.",
-            });
-            setIsLoading(false);
-            return;
-        }
-
         try {
-            console.log("Sending email with Service ID:", serviceId); // Safe to log ID
-
             await emailjs.send(
-                serviceId,
-                templateId,
+                process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID!,
+                process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID!,
                 {
                     from_name: values.name,
                     from_email: values.email,
                     message: values.message,
                 },
-                publicKey
+                process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY!
             );
 
             toast({
@@ -91,16 +69,12 @@ const ContactPage = () => {
             });
             form.reset();
         } catch (error) {
-            // Enhanced Error Logging
             console.error("EmailJS Error:", error);
-            if (error && typeof error === 'object') {
-                console.error("EmailJS Error Details:", JSON.stringify(error));
-            }
 
             toast({
                 variant: "destructive",
                 title: "Error Sending Message",
-                description: "Something went wrong. Please check your internet connection or try again later.",
+                description: "Something went wrong. Please try again later.",
             });
         } finally {
             setIsLoading(false);
