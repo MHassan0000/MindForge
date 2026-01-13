@@ -157,7 +157,7 @@ export const addBookmark = async (companionId: string, path: string) => {
     const { userId } = await auth();
     if (!userId) return;
     const supabase = createSupabaseClient();
-    const { data, error } = await supabase.from("bookmarks").insert({
+    const { data, error } = await supabase.from("Bookmarks").insert({
         companion_id: companionId,
         user_id: userId,
     });
@@ -175,7 +175,7 @@ export const removeBookmark = async (companionId: string, path: string) => {
     if (!userId) return;
     const supabase = createSupabaseClient();
     const { data, error } = await supabase
-        .from("bookmarks")
+        .from("Bookmarks")
         .delete()
         .eq("companion_id", companionId)
         .eq("user_id", userId);
@@ -190,12 +190,12 @@ export const removeBookmark = async (companionId: string, path: string) => {
 export const getBookmarkedCompanions = async (userId: string) => {
     const supabase = createSupabaseClient();
     const { data, error } = await supabase
-        .from("bookmarks")
-        .select(`companions:companion_id (*)`) // Notice the (*) to get all the companion data
+        .from("Bookmarks")
+        .select(`Companions:companion_id (*)`) // Notice the (*) to get all the companion data
         .eq("user_id", userId);
     if (error) {
         throw new Error(error.message);
     }
     // We don't need the bookmarks data, so we return only the companions
-    return data.map(({ companions }) => companions);
+    return data.map(({ Companions }) => Companions);
 };
