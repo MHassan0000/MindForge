@@ -55,6 +55,16 @@ export const getCompanion = async (id: string) => {
 
 export const addToSessionHistory = async (companionId: string) => {
     const { userId } = await auth();
+
+    // Check if user can save session history (Core Learner & Pro only)
+    const { canSaveSessionHistory } = await import('./subscription.actions');
+    const canSave = await canSaveSessionHistory();
+
+    if (!canSave) {
+        // Basic plan users cannot save history, return null without error
+        return null;
+    }
+
     const supabase = createSupabaseClient();
     const { data, error } = await supabase.from('Session_History')
         .insert({

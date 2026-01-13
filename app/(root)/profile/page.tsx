@@ -4,10 +4,12 @@ import {
     getUserCompanions,
     getUserSessions,
 } from "@/lib/actions/companion.actions";
+import { getUserPlan } from "@/lib/actions/subscription.actions";
 import Image from "next/image";
 import CompanionList from "@/components/ui/shared/CompanionList";
-import { GraduationCap, BookOpen } from "lucide-react";
+import { GraduationCap, BookOpen, Crown } from "lucide-react";
 import AnimatedProfileContent from "@/components/ui/shared/AnimatedProfileContent";
+import Link from "next/link";
 
 const Profile = async () => {
     const user = await currentUser();
@@ -15,10 +17,18 @@ const Profile = async () => {
     if (!user) redirect("/sign-in");
 
     // Fetch data in parallel
-    const [companions, sessionHistory] = await Promise.all([
+    const [companions, sessionHistory, userPlan] = await Promise.all([
         getUserCompanions(user.id),
-        getUserSessions(user.id)
+        getUserSessions(user.id),
+        getUserPlan()
     ]);
+
+    // Plan badge color mapping
+    const planColors: Record<string, string> = {
+        gray: "bg-zinc-700/50 text-zinc-300 border-zinc-600",
+        blue: "bg-blue-500/20 text-blue-400 border-blue-500/30",
+        purple: "bg-purple-500/20 text-purple-400 border-purple-500/30",
+    };
 
     return (
         <AnimatedProfileContent>
@@ -50,7 +60,13 @@ const Profile = async () => {
                             <p className="text-zinc-400 font-medium">
                                 {user.emailAddresses[0].emailAddress}
                             </p>
-
+                            {/* Plan Badge */}
+                            <Link href="/subscription" className="inline-block">
+                                <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold border transition-all hover:scale-105 cursor-pointer ${planColors[userPlan.color]}`}>
+                                    <Crown className="w-3 h-3" />
+                                    {userPlan.displayName}
+                                </div>
+                            </Link>
                         </div>
                     </div>
 
