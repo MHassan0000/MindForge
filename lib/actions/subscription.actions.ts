@@ -40,9 +40,7 @@ const PLAN_DETAILS: Record<PlanType, PlanDetails> = {
     },
 };
 
-/**
- * Returns the user's current subscription plan based on Clerk billing.
- */
+
 export const getUserPlan = async (): Promise<PlanDetails> => {
     const { has } = await auth();
 
@@ -56,10 +54,7 @@ export const getUserPlan = async (): Promise<PlanDetails> => {
     }
 };
 
-/**
- * Checks if the current user can save session history.
- * Only Core Learner and Pro Plan users have this feature.
- */
+
 export const canSaveSessionHistory = async (): Promise<boolean> => {
     const plan = await getUserPlan();
     return plan.canSaveHistory;

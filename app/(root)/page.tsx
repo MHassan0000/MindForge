@@ -5,6 +5,8 @@ import Cta from "@/components/ui/shared/Cta";
 import FeaturesSection from "@/components/ui/shared/FeaturesSection";
 import { getRecentSessions, getAllCompanions, getUserBookmarkIds } from "@/lib/actions/companion.actions";
 
+export const dynamic = "force-dynamic";
+
 export default async function Home() {
 
   const [companions, recentSessions, bookmarkIds] = await Promise.all([
