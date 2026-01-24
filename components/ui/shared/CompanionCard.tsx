@@ -27,7 +27,7 @@ const CompanionCard = ({ item, isBookmarked = false }: CompanionCardProps) => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             whileHover={{ y: -5, transition: { duration: 0.2 } }}
-            className="relative w-full md:min-w-[350px] md:max-w-[400px] bg-zinc-900/50 backdrop-blur-md border border-white/5 rounded-3xl p-6 overflow-hidden group"
+            className="relative w-full bg-zinc-900/50 backdrop-blur-md border border-white/5 rounded-3xl p-6 overflow-hidden group"
             style={{ borderColor: `${color}20` }}
         >
             {/* Background Glow Effect based on subject color */}
