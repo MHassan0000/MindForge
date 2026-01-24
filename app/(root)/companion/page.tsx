@@ -1,3 +1,6 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import { getAllCompanions, getUserBookmarkIds } from "@/lib/actions/companion.actions";
 import CompanionCard from "@/components/ui/shared/CompanionCard";
 import SearchInput from "@/components/ui/shared/SearchInput";
@@ -5,24 +8,60 @@ import SubjectFilter from "@/components/ui/shared/SubjectFilter";
 import AnimatedContent from "@/components/ui/shared/AnimatedContent";
 import { Sparkles } from "lucide-react";
 
-interface PageProps {
-    searchParams: Promise<{
-        subject?: string;
-        topic?: string;
-        page?: string;
-        [key: string]: string | string[] | undefined;
-    }>;
-}
+const CompanionsLibrary = () => {
+    const [allCompanions, setAllCompanions] = useState<Companion[]>([]);
+    const [filteredCompanions, setFilteredCompanions] = useState<Companion[]>([]);
+    const [bookmarkIds, setBookmarkIds] = useState<Set<string>>(new Set());
+    const [searchQuery, setSearchQuery] = useState("");
+    const [selectedSubject, setSelectedSubject] = useState("");
+    const [isLoading, setIsLoading] = useState(true);
 
-const CompanionsLibrary = async (props: PageProps) => {
-    const filters = await props.searchParams;
-    const subject = filters.subject ? String(filters.subject) : "";
-    const topic = filters.topic ? String(filters.topic) : "";
+    // Fetch all companions on mount
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                setIsLoading(true);
+                const [companions, bookmarks] = await Promise.all([
+                    getAllCompanions({ limit: 1000 }), // Fetch all companions
+                    getUserBookmarkIds()
+                ]);
+                setAllCompanions(companions || []);
+                setFilteredCompanions(companions || []);
+                setBookmarkIds(bookmarks);
+            } catch (error) {
+                console.error("Error fetching companions:", error);
+                setAllCompanions([]);
+                setFilteredCompanions([]);
+            } finally {
+                setIsLoading(false);
+            }
+        };
 
-    const [companions, bookmarkIds] = await Promise.all([
-        getAllCompanions({ subject, topic }),
-        getUserBookmarkIds()
-    ]);
+        fetchData();
+    }, []);
+
+    // Client-side filtering - runs instantly whenever search or subject changes
+    useEffect(() => {
+        let filtered = allCompanions;
+
+        // Filter by subject
+        if (selectedSubject && selectedSubject !== "all") {
+            filtered = filtered.filter(companion =>
+                companion.subject?.toLowerCase() === selectedSubject.toLowerCase()
+            );
+        }
+
+        // Filter by search query (topic or name)
+        if (searchQuery.trim()) {
+            const query = searchQuery.toLowerCase();
+            filtered = filtered.filter(companion =>
+                companion.topic?.toLowerCase().includes(query) ||
+                companion.name?.toLowerCase().includes(query)
+            );
+        }
+
+        setFilteredCompanions(filtered);
+    }, [searchQuery, selectedSubject, allCompanions]);
 
     return (
         <main className="min-h-screen pt-24 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-12">
@@ -44,16 +83,23 @@ const CompanionsLibrary = async (props: PageProps) => {
 
                 {/* Filters */}
                 <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto bg-black/40 backdrop-blur-xl p-2 rounded-2xl border border-white/5">
-                    <SearchInput />
-                    <SubjectFilter />
+                    <SearchInput value={searchQuery} onChange={setSearchQuery} />
+                    <SubjectFilter value={selectedSubject} onChange={setSelectedSubject} />
                 </div>
             </section>
 
             {/* Grid Section */}
             <AnimatedContent>
-                {companions.length > 0 ? (
+                {isLoading ? (
+                    <div className="flex flex-col items-center justify-center py-20 text-center space-y-4">
+                        <div className="w-16 h-16 rounded-full bg-zinc-900 flex items-center justify-center">
+                            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+                        </div>
+                        <h3 className="text-xl font-semibold text-white">Loading companions...</h3>
+                    </div>
+                ) : filteredCompanions.length > 0 ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                        {companions.map((companion) => (
+                        {filteredCompanions.map((companion) => (
                             <CompanionCard
                                 key={companion.id}
                                 item={companion}
