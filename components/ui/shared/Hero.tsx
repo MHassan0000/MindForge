@@ -115,7 +115,7 @@ const Hero = () => {
 
                     <button
                         onClick={scrollToFeatures}
-                        className="px-8 py-4 bg-transparent border border-white/10 text-white font-semibold text-lg rounded-full hover:bg-white/5 transition-all tracking-wider cursor-pointer"
+                        className="px-8 py-4 bg-transparent border border-white/10 text-white font-semibold text-lg rounded-full hover:bg-white/5 transition-all cursor-pointer"
                     >
                         View Demo
                     </button>

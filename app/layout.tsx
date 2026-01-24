@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Mouse_Memoirs } from "next/font/google";
+import { Geist, Geist_Mono, Space_Grotesk } from "next/font/google";
 import {
   ClerkProvider,
   SignInButton,
@@ -20,9 +20,8 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-const mouseMemoirs = Mouse_Memoirs({
-  variable: "--font-mouse-memoirs",
-  weight: ["400"],
+const spaceGrotesk = Space_Grotesk({
+  variable: "--font-space-grotesk",
   subsets: ["latin"],
 });
 
@@ -42,7 +41,7 @@ export default function RootLayout({
     <ClerkProvider afterSignOutUrl={"/"}>
       <html lang="en" className="scroll-smooth">
         <body
-          className={`${mouseMemoirs.variable} font-mouse-memoirs antialiased`}
+          className={`${spaceGrotesk.variable} font-space-grotesk antialiased`}
         >
           {children}
           <Toaster />

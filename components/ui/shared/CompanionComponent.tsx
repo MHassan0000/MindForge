@@ -296,7 +296,7 @@ const CompanionComponent = ({ companionId, subject, topic, name, userName, userI
                         </div>
 
                         <div className="text-center space-y-3 sm:space-y-4 px-4 w-full">
-                            <h2 className="text-2xl sm:text-3xl font-bold text-white tracking-wider truncate px-2">{name}</h2>
+                            <h2 className="text-2xl sm:text-3xl font-bold text-white truncate px-2">{name}</h2>
                             <div className="flex flex-col items-center gap-2">
                                 <p className={cn(
                                     "text-xs sm:text-sm font-medium px-3 py-1 rounded-full inline-block transition-colors",

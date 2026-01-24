@@ -70,7 +70,7 @@ const CompanionList = ({ items, className, title }: CompanionListProps) => {
 
                             {/* Subject Badge */}
                             <div className="flex items-center justify-between sm:w-auto w-full">
-                                <span className="px-3 py-1 rounded-full text-xs font-bold border border-white/10 bg-black/40 text-gray-300 uppercase tracking-wide">
+                                <span className="px-3 py-1 rounded-full text-xs font-bold border border-white/10 bg-black/40 text-gray-300 uppercase ">
                                     <Link href={`/companion`}>
                                         {item.subject}
                                     </Link>

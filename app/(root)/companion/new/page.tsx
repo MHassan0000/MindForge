@@ -52,12 +52,12 @@ const NewCompanionPage = async () => {
                             {/* Plan Comparison */}
                             <div className="grid sm:grid-cols-2 gap-4 pt-4">
                                 <div className="p-4 rounded-2xl bg-white/5 border border-white/10">
-                                    <p className="text-xs text-zinc-500 uppercase tracking-wider mb-1">Current Plan</p>
+                                    <p className="text-xs text-zinc-500 uppercase mb-1">Current Plan</p>
                                     <p className="text-lg font-bold text-white">{userPlan.displayName}</p>
                                     <p className="text-sm text-zinc-400">{userPlan.companionLimit} companions</p>
                                 </div>
                                 <div className="p-4 rounded-2xl bg-purple-500/10 border border-purple-500/20">
-                                    <p className="text-xs text-purple-400 uppercase tracking-wider mb-1">Recommended</p>
+                                    <p className="text-xs text-purple-400 uppercase mb-1">Recommended</p>
                                     <p className="text-lg font-bold text-white">Pro Plan</p>
                                     <p className="text-sm text-zinc-400">Unlimited companions</p>
                                 </div>

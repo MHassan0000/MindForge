@@ -57,11 +57,11 @@ const CompanionSession = async ({ params }: CompanionSessionPageProps) => {
 
                             <div className="space-y-2">
                                 <div className="flex flex-wrap items-center gap-3">
-                                    <h1 className="text-3xl md:text-4xl font-bold text-white tracking-wider">
+                                    <h1 className="text-3xl md:text-4xl font-bold text-white">
                                         {name}
                                     </h1>
                                     <span
-                                        className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider text-black bg-white/90 shadow-sm"
+                                        className="px-3 py-1 rounded-full text-xs font-bold uppercase text-black bg-white/90 shadow-sm"
                                         style={{ backgroundColor: color }}
                                     >
                                         {subject}

@@ -28,7 +28,7 @@ const Navbar = () => {
                         <Image src="/images/brainlogo3.png" alt="Logo" width={50} height={50} />
                     </div>
                 </Link>
-                <span className="text-3xl font-bold bg-clip-text text-transparent bg-linear-to-r from-white to-white/70 tracking-wider">
+                <span className="text-3xl font-bold bg-clip-text text-transparent bg-linear-to-r from-white to-white/70">
                     MindForge
                 </span>
             </div>

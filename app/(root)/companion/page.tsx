@@ -73,7 +73,7 @@ const CompanionsLibrary = () => {
                         <Sparkles className="w-3 h-3" />
                         <span>AI Learning Companions</span>
                     </div>
-                    <h1 className="text-4xl md:text-5xl font-bold text-white tracking-wider">
+                    <h1 className="text-4xl md:text-5xl font-bold text-white">
                         Explore the <span className="text-transparent bg-clip-text bg-linear-to-r from-yellow-400 to-orange-500">Library</span>
                     </h1>
                     <p className="text-lg text-gray-400 max-w-xl">

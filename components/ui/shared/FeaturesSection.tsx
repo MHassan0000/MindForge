@@ -49,7 +49,7 @@ const FeaturesSection = () => {
                         <Sparkles className="w-3 h-3" />
                         <span>Why Choose MindForge</span>
                     </div>
-                    <h2 className="text-4xl md:text-5xl font-bold text-white tracking-wider">
+                    <h2 className="text-4xl md:text-5xl font-bold text-white">
                         Learn Smarter, Not Harder
                     </h2>
                     <p className="text-lg text-gray-400 max-w-2xl mx-auto">
